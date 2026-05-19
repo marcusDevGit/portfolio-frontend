@@ -1,3 +1,5 @@
+import { ScrollReveal } from "../../shared/components/motion/ScrollReveal";
+
 type Skill = {
   name: string;
   icon: string;
@@ -46,25 +48,27 @@ const SKILL_CATEGORIES: SkillCategory[] = [
 export function SkillsSection() {
   return (
     <section id="skills" className="relative z-10 py-24  px-4">
-      <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-16">
-          <span className="text-xs font-display uppercase tracking-widest text-(--accent-cyan) mb-4 block ">
-            Habilidades{" "}
-          </span>
-          <h2 className="font-display font-bold text-3xl md:text-5xl text-white mb-4">
-            Stack técnica
-          </h2>
-          <p className="font-body text-(--text-secondary) max-w-xl mx-auto">
-            Tecnologia que uso no dia para construir os projetos.
-          </p>
-        </div>
+      <ScrollReveal>
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-16">
+            <span className="text-xs font-display uppercase tracking-widest text-(--accent-cyan) mb-4 block ">
+              Habilidades{" "}
+            </span>
+            <h2 className="font-display font-bold text-3xl md:text-5xl text-white mb-4">
+              Stack técnica
+            </h2>
+            <p className="font-body text-(--text-secondary) max-w-xl mx-auto">
+              Tecnologia que uso no dia para construir os projetos.
+            </p>
+          </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {SKILL_CATEGORIES.map((category) => (
-            <SkillCategoryCard key={category.title} category={category} />
-          ))}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {SKILL_CATEGORIES.map((category) => (
+              <SkillCategoryCard key={category.title} category={category} />
+            ))}
+          </div>
         </div>
-      </div>
+      </ScrollReveal>
     </section>
   );
 }
