@@ -1,0 +1,132 @@
+/* ── Geist Sans (variável) via npm ─────────────────────
+   Fonte variável = um arquivo cobre todos os pesos (100–900)
+   Servida pelo Vite localmente — sem CORB, sem CDN externo
+──────────────────────────────────────────────────────── */
+@font-face {
+    font-family: 'Geist';
+    src: url('/fonts/Geist-Variable.woff2') format('woff2');
+    font-weight: 100 900;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'GeistMono';
+    src: url('/fonts/GeistMono-Variable.woff2') format('woff2');
+    font-weight: 100 900;
+    font-style: normal;
+    font-display: swap;
+}
+
+
+/* ── Inter e JetBrains Mono via Google Fonts ─────────── */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+
+@import "tailwindcss";
+
+
+@theme {
+    --color-background: #141218;
+    --color-surface: #141218;
+    --color-surface-container: #211f24;
+    --color-primary: #00D1FF;
+    --color-primary-soft: #cfbcff;
+    --color-aurora-purple: #7000FF;
+    --color-aurora-cyan: #00D1FF;
+    --color-on-surface: #e6e0e9;
+    --color-on-surface-variant: #cbc4d2;
+    --font-display: 'Geist', sans-serif;
+    --font-body: 'Inter', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+    --shadow-glow-cyan: 0 0 20px 4px rgba(0, 209, 255, 0.35);
+    --shadow-glow-purple: 0 0 20px 4px rgba(112, 0, 255, 0.25);
+}
+
+:root {
+    /* Fundos */
+    --bg-base: #050816;
+    --bg-surface: #141218;
+    --bg-card: rgba(11, 16, 32, 0.6);
+    --bg-card-solid: #211f24;
+    /* Texto */
+    --text-primary: #e6e0e9;
+    --text-secondary: #cbc4d2;
+    --text-muted: #948e9c;
+    /* Acento */
+    --accent-cyan: #00D1FF;
+    --accent-purple: #7000FF;
+    --accent-soft: #cfbcff;
+    /* Bordas */
+    --border-subtle: rgba(255, 255, 255, 0.08);
+    --border-bright: rgba(255, 255, 255, 0.15);
+    --border-dark: rgba(255, 255, 255, 0.05);
+    /* Glow */
+    --glow-cyan: 0 0 20px 4px rgba(0, 209, 255, 0.25);
+    --glow-purple: 0 0 20px 4px rgba(112, 0, 255, 0.25);
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    background-color: var(--bg-base);
+    color: var(--text-primary);
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* ── Seleção de texto estilizada ─────────────────────── */
+::selection {
+    background: rgba(0, 209, 255, 0.2);
+    color: #fff;
+}
+
+/* ── Scrollbar customizada ───────────────────────────── */
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bg-surface);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--border-bright);
+    border-radius: 3px;
+}
+
+/* ── Utilitários de glassmorphism ────────────────────── */
+.glass {
+    background: var(--bg-card);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--border-subtle);
+}
+
+/* ── Glow animado (background atmospherico) ─────────── */
+.aurora-bg::before {
+    content: '';
+    position: fixed;
+    top: -20%;
+    left: -20%;
+    width: 60%;
+    height: 60%;
+    background: radial-gradient(circle, rgba(112, 0, 255, 0.12) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+.aurora-bg::after {
+    content: '';
+    position: fixed;
+    bottom: -20%;
+    right: -20%;
+    width: 60%;
+    height: 60%;
+    background: radial-gradient(circle, rgba(0, 209, 255, 0.10) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+}
