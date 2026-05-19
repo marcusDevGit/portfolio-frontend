@@ -1,5 +1,6 @@
 import { PROJECTS, type Project } from './projects.data'
 import { ScrollReveal } from '../../shared/components/motion/ScrollReveal'
+import { useCursorStore } from '../../shared/stores/useCursorStore'
 
 
 export function ProjectsSection() {
@@ -30,6 +31,7 @@ export function ProjectsSection() {
   );
 }
 function ProjectCard({ project }: { project: Project }) {
+  const setHovering = useCursorStore((state) => state.setHovering)
   return (
     <article
       className="
@@ -39,6 +41,8 @@ function ProjectCard({ project }: { project: Project }) {
         hover:border-(--accent-cyan)/30
         transition-all duration-300
       "
+      onMouseEnter={() => setHovering(true)}
+      onMouseLeave={() => setHovering(false)}
     >
       {project.highlight && (
         <div className="absolute inset-0 rounded-2xl bg-linear-to-br from-(--accent-cyan)/5 to-transparent pointer-events-none" />

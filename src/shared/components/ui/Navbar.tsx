@@ -1,3 +1,5 @@
+import { useCursorStore } from "../../stores/useCursorStore";
+
 const NAV_LINKS = [
   { label: "Sobre", href: "#about" },
   { label: "Projetos", href: "#projects" },
@@ -6,6 +8,7 @@ const NAV_LINKS = [
   { label: "Contato", href: "#contact" },
 ];
 export function Navbar() {
+  const setHovering = useCursorStore((state) => state.setHovering);
   return (
     <header className="fixed top-6 left-0 right-0 z-50 flex justify-center px-4">
       <nav className="rounded-full px-6 py-3 flex items-center gap-8 bg-[rgba(11,16,32,0.6)] backdrop-blur-md border border-white/10">
@@ -19,6 +22,8 @@ export function Navbar() {
               <a
                 href={link.href}
                 className="text-sm font-body text-(--text-secondary) hover:text-white transition-colors duration-200"
+                onMouseEnter={() => setHovering(true)}
+                onMouseLeave={() => setHovering(false)}
               >
                 {link.label}
               </a>
@@ -29,6 +34,8 @@ export function Navbar() {
         <a
           href="#contact"
           className="text-xs font-display font-semibold uppercase tracking-widest px-4 py-2 rounded-full bg-(--accent-cyan) text-[#050816] hover:shadow-(--glow-cyan) transition-all duration-300"
+          onMouseEnter={() => setHovering(true)}
+          onMouseLeave={() => setHovering(false)}
         >
           Hire Me
         </a>
