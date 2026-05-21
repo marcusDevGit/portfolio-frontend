@@ -142,3 +142,4 @@ As variáveis de design estão definidas em `index.css`:
 - [ ] **Deploy** — pipeline na Vercel / Netlify
 - [ ] **Foto real** — adicionar imagem em `public/images/perfil-port.png`
 - [ ] **Testes** — unitários para `countMonthlyContributions` em `GitHubSection`
+# Build qui 21 mai 2026 15:12:31 -03
