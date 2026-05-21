@@ -1,9 +1,34 @@
-import { PROJECTS, type Project } from './projects.data'
-import { ScrollReveal } from '../../shared/components/motion/ScrollReveal'
-import { useCursorStore } from '../../shared/stores/useCursorStore'
+import { useState, useEffect } from "react";
+import { ScrollReveal } from "../../shared/components/motion/ScrollReveal";
+import { useCursorStore } from "../../shared/stores/useCursorStore";
 
+type Project = {
+  id: string;
+  title: string;
+  description: string;
+  techStack: string[];
+  githubUrl: string | null;
+  demoUrl: string | null;
+  featured: boolean;
+  order: number;
+};
+type FetchStatus = "idle" | "loading" | "success" | "error";
 
 export function ProjectsSection() {
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [status, setStatus] = useState<FetchStatus>("loading");
+
+  useEffect(() => {
+    fetch(`${import.meta.env.VITE_API_URL}/api/projects`)
+      .then(async (res) => {
+        if (!res.ok) throw new Error("Falha ao carregar projetos");
+        const json = await res.json();
+        setProjects(json.data);
+        setStatus("success");
+      })
+      .catch(() => setStatus("error"));
+  }, []);
+
   return (
     <section id="projects" className="relative z-10 py-24 px-4">
       <ScrollReveal>
@@ -20,18 +45,36 @@ export function ProjectsSection() {
               desenvolvedor
             </p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {PROJECTS.map((project) => (
-              <ProjectCard key={project.title} project={project} />
-            ))}
-          </div>
+
+          {status === "loading" && (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {Array.from({ length: 3 }).map((_, i) => (
+                <div
+                  key={i}
+                  className="bg-[rgba(11,16,32,0.6)] border border-white/10 rounded-2xl p-6 animate-pulse h-48"
+                />
+              ))}
+            </div>
+          )}
+          {status === "error" && (
+            <p className="text-center text-(--text-muted) font-body text-sm">
+              Não foi possível carregar os projetos no momento.
+            </p>
+          )}
+          {status === "success" && (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {projects.map((project) => (
+                <ProjectCard key={project.id} project={project} />
+              ))}
+            </div>
+          )}
         </div>
       </ScrollReveal>
     </section>
   );
 }
 function ProjectCard({ project }: { project: Project }) {
-  const setHovering = useCursorStore((state) => state.setHovering)
+  const setHovering = useCursorStore((state) => state.setHovering);
   return (
     <article
       className="
@@ -44,7 +87,7 @@ function ProjectCard({ project }: { project: Project }) {
       onMouseEnter={() => setHovering(true)}
       onMouseLeave={() => setHovering(false)}
     >
-      {project.highlight && (
+      {project.featured && (
         <div className="absolute inset-0 rounded-2xl bg-linear-to-br from-(--accent-cyan)/5 to-transparent pointer-events-none" />
       )}
 
@@ -55,7 +98,7 @@ function ProjectCard({ project }: { project: Project }) {
         {project.description}
       </p>
       <div className="flex flex-wrap gap-2 mb-6">
-        {project.stack.map((tech) => (
+        {project.techStack.map((tech) => (
           <span
             key={tech}
             className="text-[10px] font-mono uppercase tracking-wider text-(--text-muted) px-2 py-1 rounded border border-white/10"
@@ -66,9 +109,9 @@ function ProjectCard({ project }: { project: Project }) {
       </div>
 
       <div className="flex items-center gap-4">
-        {project.github && (
+        {project.githubUrl && (
           <a
-            href={project.github}
+            href={project.githubUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="text-xs font-display font-semibold uppercase tracking-widest text-(--text-secondary) hover:text-white transition-colors duration-200"
@@ -76,9 +119,9 @@ function ProjectCard({ project }: { project: Project }) {
             GitHub →
           </a>
         )}
-        {project.demo && (
+        {project.demoUrl && (
           <a
-            href={project.demo}
+            href={project.demoUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="text-xs font-display font-semibold uppercase tracking-widest text-(--accent-cyan) hover:text-white transition-colors duration-200"
