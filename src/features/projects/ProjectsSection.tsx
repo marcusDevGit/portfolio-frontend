@@ -37,7 +37,10 @@ export function ProjectsSection() {
   }, []);
 
   return (
-    <section id="projects" className="relative z-10 py-24 px-4">
+    <section
+      id="projects"
+      className="relative z-10 py-16 md:py-24 px-4 sm:px-6"
+    >
       <ScrollReveal>
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
