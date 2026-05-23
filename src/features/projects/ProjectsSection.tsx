@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { ScrollReveal } from "../../shared/components/motion/ScrollReveal";
 import { useCursorStore } from "../../shared/stores/useCursorStore";
+import { ProjectCaseStudyModal } from "./ProjectCaseStudy";
 
-type Project = {
+export type Project = {
   id: string;
   title: string;
   description: string;
@@ -11,12 +12,18 @@ type Project = {
   demoUrl: string | null;
   featured: boolean;
   order: number;
+  problem?: string;
+  solution?: string;
+  technicalDecisions?: string;
+  challenges?: string;
+  impact?: string;
 };
 type FetchStatus = "idle" | "loading" | "success" | "error";
 
 export function ProjectsSection() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [status, setStatus] = useState<FetchStatus>("loading");
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
 
   useEffect(() => {
     fetch(`${import.meta.env.VITE_API_URL}/api/projects`)
@@ -64,16 +71,31 @@ export function ProjectsSection() {
           {status === "success" && (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {projects.map((project) => (
-                <ProjectCard key={project.id} project={project} />
+                <ProjectCard
+                  key={project.id}
+                  project={project}
+                  onSelect={() => setSelectedProject(project)}
+                />
               ))}
             </div>
           )}
         </div>
       </ScrollReveal>
+      <ProjectCaseStudyModal
+        project={selectedProject}
+        isOpen={!!selectedProject}
+        onClose={() => setSelectedProject(null)}
+      />
     </section>
   );
 }
-function ProjectCard({ project }: { project: Project }) {
+function ProjectCard({
+  project,
+  onSelect,
+}: {
+  project: Project;
+  onSelect: () => void;
+}) {
   const setHovering = useCursorStore((state) => state.setHovering);
   return (
     <article
@@ -129,6 +151,12 @@ function ProjectCard({ project }: { project: Project }) {
             Demo →
           </a>
         )}
+        <button
+          onClick={onSelect}
+          className="ml-auto text-[10px] sm:text-xs font-display font-semibold uppercase tracking-widest text-white bg-white/10 border border-white/20 hover:bg-white/20 px-3 py-1.5 rounded transition-all duration-300"
+        >
+          Ler Case Study
+        </button>
       </div>
     </article>
   );

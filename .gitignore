@@ -25,3 +25,5 @@ dist-ssr
 .env.*
 .env
 NEXT_STEPS.md
+.vercel
+.env*

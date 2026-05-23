@@ -1,20 +1,30 @@
 import { useEffect, useState } from "react";
 import { ScrollReveal } from "../../shared/components/motion/ScrollReveal";
+import { useCursorStore } from "../../shared/stores/useCursorStore";
 
 const GITHUB_USERNAME = "marcusDevGit";
 
-type GitHubStats = {
-  public_repos: number;
-  monthlyContributions: number;
-  accountAge: string;
+type GitHubRepo = {
+  id: number;
+  name: string;
+  description: string | null;
+  html_url: string;
+  language: string | null;
+  stargazers_count: number;
+  fork: boolean;
 };
 
-type FetchStatus = "idle" | "loading" | "success" | "error";
-
 export function GitHubSection() {
-  const [stats, setStats] = useState<GitHubStats | null>(null);
-  const [status, setStatus] = useState<FetchStatus>("idle");
+  const [latestRepo, setLatestRepo] = useState<GitHubRepo | null>(null);
+  const [languages, setLanguages] = useState<{ name: string; count: number }[]>(
+    [],
+  );
+  const [status, setStatus] = useState<
+    "loading" | "error" | "success" | "idle"
+  >("loading");
   const [imgError, setImgError] = useState(false);
+
+  const setHovering = useCursorStore((state) => state.setHovering);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -22,10 +32,14 @@ export function GitHubSection() {
 
     fetch(`${import.meta.env.VITE_API_URL}/api/github/stats`)
       .then(async (res) => {
-        if (!res.ok) throw new Error(`API: HTTP ${res.status}`);
-        const json = await res.json();
+        if (!res.ok) throw new Error("Falha na API");
+        const data = await res.json();
 
-        setStats(json);
+        if (data.repos.length > 0) {
+          setLatestRepo(data.repos[0]);
+        }
+
+        setLanguages(data.languages.slice(0, 4));
         setStatus("success");
       })
       .catch(() => {
@@ -42,10 +56,10 @@ export function GitHubSection() {
               Open Source
             </span>
             <h2 className="font-display font-bold text-3xl md:text-5xl text-white mb-4">
-              Atividade no GitHub
+              Engenharia Aberta
             </h2>
             <p className="font-body text-(--text-secondary) max-w-xl mx-auto">
-              Acompanhe minha atividade e contribuições em tempo real.
+              Foco no código atual. Consistência fala mais alto que palavras.
             </p>
           </div>
           <div className="mb-10">
@@ -53,55 +67,89 @@ export function GitHubSection() {
               <img
                 src={`https://ghchart.rshah.org/${GITHUB_USERNAME}`}
                 alt="Calendário de contribuições do GitHub de Marcus"
-                className="w-full rounded-2xl border border-white/10 opacity-80"
+                className="w-full rounded-xl border border-white/10 opacity-90 max-block-screen"
                 onError={() => setImgError(true)}
               />
             ) : (
               <div className="w-full rounded-2xl border border-white/10 bg-[rgba(11,16,32,0.6)] p-8 text-center">
-                <p className="text-(--text-muted) font-body text-sm">
-                  Gráfico de contribuições temporariamente indisponível.
-                </p>
-                <a
-                  href={`https://github.com/${GITHUB_USERNAME}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-(--accent-cyan) text-sm font-display mt-2 inline-block hover:underline"
-                >
-                  Ver no GitHub →
-                </a>
+                Gráfico de contribuições temporariamente indisponível.
               </div>
             )}
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-            {status === "loading" &&
-              Array.from({ length: 3 }).map((_, i) => (
-                <div
-                  key={i}
-                  className="bg-[rgba(11,16,32,0.6)] border border-white/10 rounded-2xl p-6 animate-pulse"
-                >
-                  <div className="h-8 bg-white/10 rounded mb-2 w-16 mx-auto" />
-                  <div className="h-3 bg-white/5 rounded w-24 mx-auto" />
+          {status === "loading" && (
+            <div className="text-center text-zinc-500 animate-pulse">
+              Sincronizando com o GitHub...
+            </div>
+          )}
+
+          {status === "success" && (
+            <div className="flex flex-col gap-8">
+              {/* Linha Superior: Stack e Streak (Lado a lado no Desktop) */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                {/* Stack Principal */}
+                <div className="bg-white/2 border border-white/5 rounded-2xl p-6 flex flex-col justify-center">
+                  <h3 className="font-display text-sm font-bold text-zinc-400 uppercase tracking-widest mb-6 text-center">
+                    Stack Principal Atual
+                  </h3>
+                  <div className="space-y-4 max-w-xs mx-auto w-full">
+                    {languages.map((lang) => (
+                      <div
+                        key={lang.name}
+                        className="flex justify-between items-center border-b border-white/5 pb-2"
+                      >
+                        <span className="text-white font-mono text-sm">
+                          {lang.name}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              ))}
-            {status === "error" && (
-              <div className="col-span-3 text-center text-(--text-muted) font-body text-sm py-8">
-                Não foi possível carregar os dados do GitHub no momento.
+                {/* GitHub Streak */}
+                <div className="bg-white/2 border border-white/5 rounded-2xl p-6 flex items-center justify-center">
+                  <img
+                    src={`https://github-readme-streak-stats.herokuapp.com/?user=${GITHUB_USERNAME}&theme=dark&hide_border=true&background=00000000&ring=06b6d4&fire=06b6d4&currStreakNum=ffffff`}
+                    alt="GitHub Streak Stats"
+                    className="w-full max-w-md opacity-90"
+                  />
+                </div>
               </div>
-            )}
-            {status === "success" && stats && (
-              <>
-                <StatCard
-                  value={stats.public_repos}
-                  label="Repositórios públicos"
-                />
-                <StatCard
-                  value={stats.monthlyContributions}
-                  label="Contribuições este mês"
-                />
-                <StatCard value={stats.accountAge} label="No GitHub" />
-              </>
-            )}
-          </div>
+              {/* Linha Inferior: Último Commit (Ocupando largura total) */}
+              <div className="bg-white/2 border border-white/5 rounded-2xl p-6 sm:p-8 flex flex-col">
+                <h3 className="font-display text-sm font-bold text-zinc-400 uppercase tracking-widest mb-8 text-center">
+                  Último Commit
+                </h3>
+                {latestRepo ? (
+                  <a
+                    href={latestRepo.html_url}
+                    target="_blank"
+                    rel="noreferrer"
+                    onMouseEnter={() => setHovering(true)}
+                    onMouseLeave={() => setHovering(false)}
+                    className="group max-w-3xl mx-auto w-full p-6 sm:p-8 rounded-xl border border-white/10 bg-black/40 hover:bg-white/5 hover:border-(--accent-cyan)/50 transition-all flex flex-col"
+                  >
+                    <h4 className="text-white font-bold text-xl mb-3 group-hover:text-(--accent-cyan) transition-colors">
+                      {latestRepo.name}
+                    </h4>
+                    <p className="text-sm text-zinc-500 line-clamp-3 mb-6 flex-1">
+                      {latestRepo.description ||
+                        "Desenvolvimento ativo. Acesse para ver o código fonte."}
+                    </p>
+                    <div className="flex items-center justify-between text-xs font-mono text-zinc-400 pt-4 border-t border-white/5">
+                      <span className="text-(--accent-cyan)">
+                        {latestRepo.language || "Code"}
+                      </span>
+                      <span>⭐ {latestRepo.stargazers_count}</span>
+                    </div>
+                  </a>
+                ) : (
+                  <div className="flex-1 flex items-center justify-center text-zinc-500 text-sm">
+                    Nenhum repositório público recente.
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
           <div className="text-center mt-10">
             <a
               href={`https://github.com/${GITHUB_USERNAME}`}
@@ -116,26 +164,5 @@ export function GitHubSection() {
         </div>
       </ScrollReveal>
     </section>
-  );
-}
-
-function StatCard({ value, label }: { value: number | string; label: string }) {
-  return (
-    <div
-      className="
-      text-center
-      bg-[rgba(11,16,32,0.6)] backdrop-blur-md
-      border border-white/10 rounded-2xl p-6
-      hover:border-(--accent-cyan)/20
-      transition-all duration-300
-    "
-    >
-      <p className="font-display font-bold text-3xl text-(--accent-cyan) mb-2">
-        {value}
-      </p>
-      <p className="text-xs font-display uppercase tracking-widest text-(--text-muted)">
-        {label}
-      </p>
-    </div>
   );
 }
