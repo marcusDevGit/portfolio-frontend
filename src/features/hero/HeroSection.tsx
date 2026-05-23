@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { m, useScroll, useTransform } from "framer-motion";
 import anime from "animejs";
 
 // Dois segmentos para aplicar estilos diferentes:
@@ -145,7 +145,7 @@ export function HeroSection() {
       id="top"
       className="relative z-10 min-h-screen flex flex-col items-center justify-center text-center px-4 "
     >
-      <motion.div
+      <m.div
         ref={badgeref}
         style={{ opacity: 0, y: badgeY }}
         className="flex items-center gap-2 mb-6"
@@ -157,8 +157,8 @@ export function HeroSection() {
         <span className="text-xs font-display font-semibold uppercase tracking-widest text-(--text-secondary)">
           Disponível para projetos
         </span>
-      </motion.div>
-      <motion.h1
+      </m.div>
+      <m.h1
         style={{ y: titleY }}
         className="font-display font-bold text-4xl md:text-6xl lg:text-[72px] leading-[1.1] tracking-[-0.04em] text-white mb-6"
       >
@@ -178,9 +178,9 @@ export function HeroSection() {
         >
           {GREETING_NAME}
         </span>
-      </motion.h1>
+      </m.h1>
 
-      <motion.div
+      <m.div
         style={{ y: subtitleY }}
         className="flex flex-col items-center gap-2"
       >
@@ -216,7 +216,7 @@ export function HeroSection() {
             Entrar em Contato
           </a>
         </div>
-      </motion.div>
+      </m.div>
       <div
         ref={scrrollRef}
         style={{ opacity: 0 }}

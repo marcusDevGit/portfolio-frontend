@@ -1,3 +1,4 @@
+import { LazyMotion, domAnimation } from "framer-motion";
 import { CustomCursor } from "./shared/components/cursor/CustomCursor";
 import { Navbar } from "./shared/components/ui/Navbar";
 import { HeroSection } from "./features/hero/HeroSection";
@@ -10,22 +11,23 @@ import { Footer } from "./shared/components/ui/Footer";
 
 function App() {
   return (
-    <div className="aurora-bg min-h-screen cursor-none">
-      <CustomCursor />
-      <Navbar />
+    <LazyMotion features={domAnimation} strict>
+      <div className="aurora-bg min-h-screen cursor-none">
+        <CustomCursor />
+        <Navbar />
 
-      <main className="relative z-10 pt-32 text-center">
-        <HeroSection />
-        <AboutSection />
-        <ProjectsSection />
-        <SkillsSection />
-        <GitHubSection />
-        <ContactSection />
-      </main>
-      <Footer />
-    </div>
+        <main className="relative z-10 pt-32 text-center">
+          <HeroSection />
+          <AboutSection />
+          <ProjectsSection />
+          <SkillsSection />
+          <GitHubSection />
+          <ContactSection />
+        </main>
+        <Footer />
+      </div>
+    </LazyMotion>
   );
 }
 
 export default App;
-
