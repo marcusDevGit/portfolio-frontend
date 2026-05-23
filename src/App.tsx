@@ -1,4 +1,5 @@
 import { LazyMotion, domAnimation } from "framer-motion";
+import { SEO } from "./shared/components/seo/SEO";
 import { CustomCursor } from "./shared/components/cursor/CustomCursor";
 import { Navbar } from "./shared/components/ui/Navbar";
 import { HeroSection } from "./features/hero/HeroSection";
@@ -12,6 +13,7 @@ import { Footer } from "./shared/components/ui/Footer";
 function App() {
   return (
     <LazyMotion features={domAnimation} strict>
+      <SEO />
       <div className="aurora-bg min-h-screen cursor-none">
         <CustomCursor />
         <Navbar />

@@ -15,6 +15,7 @@
     "geist": "^1.7.0",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
+    "react-helmet-async": "^3.0.0",
     "zustand": "^5.0.13"
   },
   "devDependencies": {
