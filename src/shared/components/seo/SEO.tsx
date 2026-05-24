@@ -8,7 +8,7 @@ interface SEOProps {
 }
 
 export function SEO({
-  title = "Marcus Vinicius - Desenvolvedor Full-Stack",
+  title = "Marcus Phellypp - Desenvolvedor Full-Stack",
   description = "Desenvolvedor focado em React, Node.js e TypeScript. Construindo interfaces modernas e APIs robustas com foco em segurança e escalabilidade.",
   image = "https://portfolio-frontend-liart-pi.vercel.app/og-image.png",
   url = "https://portfolio-frontend-liart-pi.vercel.app",

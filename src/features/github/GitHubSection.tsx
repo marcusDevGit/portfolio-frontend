@@ -67,6 +67,8 @@ export function GitHubSection() {
               <img
                 src={`https://ghchart.rshah.org/${GITHUB_USERNAME}`}
                 alt="Calendário de contribuições do GitHub de Marcus"
+                loading="lazy"
+                decoding="async"
                 className="w-full rounded-xl border border-white/10 opacity-90 max-block-screen"
                 onError={() => setImgError(true)}
               />
@@ -109,6 +111,8 @@ export function GitHubSection() {
                   <img
                     src={`https://github-readme-streak-stats.herokuapp.com/?user=${GITHUB_USERNAME}&theme=dark&hide_border=true&background=00000000&ring=06b6d4&fire=06b6d4&currStreakNum=ffffff`}
                     alt="GitHub Streak Stats"
+                    loading="lazy"
+                    decoding="async"
                     className="w-full max-w-md opacity-90"
                   />
                 </div>

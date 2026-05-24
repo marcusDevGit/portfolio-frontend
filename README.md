@@ -1,145 +1,39 @@
-# 🌐 Personal Site — Frontend
+# 🎨 Meu Portfólio Premium Frontend
 
-Portfólio pessoal desenvolvido com **React + TypeScript + Tailwind CSS v4**, com foco em design cinematográfico, animações fluidas e consumo de APIs externas.
+Este é o repositório público do Frontend do meu portfólio pessoal (Versão 2). Ele foi desenhado com um foco gigantesco em **UX/UI avançada**, **Performance Absoluta** e **Acessibilidade**.
 
----
+Este é o repositório do Frontend do meu portfólio pessoal (Versão 2). Ele foi desenhado com um foco gigantesco em **UX/UI avançada**, **Performance Absoluta** e **Acessibilidade**.
 
-## 🚀 Stack
+## 🛠️ Tecnologias Utilizadas
 
-| Tecnologia | Versão | Finalidade |
-|---|---|---|
-| [React](https://react.dev/) | 19 | Biblioteca de UI |
-| [TypeScript](https://www.typescriptlang.org/) | 6 | Tipagem estática |
-| [Vite](https://vite.dev/) | 8 | Bundler e dev server |
-| [Tailwind CSS](https://tailwindcss.com/) | 4 | Estilização utilitária |
-| [Anime.js](https://animejs.com/) | 3 | Animações de entrada e loop |
-| [Geist Font](https://vercel.com/font) | 1.7 | Tipografia |
+### Frontend (Repositório Atual - Vercel)
 
----
+- **React + Vite:** Para um desenvolvimento e build ultra rápidos.
+- **TypeScript:** Tipagem forte para maior segurança e prevenção de bugs.
+- **Tailwind CSS:** Utilizado para estilização utilitária e backgrounds complexos (efeitos de Glassmorphism e Auroras em CSS puro).
+- **Framer Motion:** Animações fluidas a 60FPS.
+  - Implementação completa com `<LazyMotion>` para reduzir drasticamente o tamanho do bundle final.
+  - Aceleração de hardware com `transform-gpu` para aliviar a CPU do usuário.
+  - Acessibilidade ativada via `useReducedMotion`, removendo animações de translação agressivas para usuários que ativaram "Reduzir Movimento" no Sistema Operacional.
+- **Zustand:** Gerenciamento de estado global leve e sem boilerplate (utilizado para controlar o Custom Cursor).
+- **React Helmet Async:** Injeção dinâmica de tags SEO e Open Graph, garantindo previews ricos em redes sociais (LinkedIn, WhatsApp, Twitter).
 
-## ⚙️ Instalação e execução
+### Backend (Repositório Privado - Google Cloud Run)
 
-```bash
-# Instalar dependências
-npm install
+- **Node.js + Express:** API RESTful focada em performance e consumo eficiente de recursos.
+- **TypeScript:** Utilizado ponta a ponta para unificar a linguagem com o Frontend.
+- **Prisma ORM:** Modelagem de banco de dados _Type-Safe_ com Singleton para otimizar conexões em ambiente Serverless.
+- **NeonDB (PostgreSQL):** Banco de dados relacional e Serverless para persistência de Projetos e mensagens de Contato.
+- **Upstash (Redis):** Cache em memória ultrarrápido para suportar o BFF.
+- **Padrão BFF (Backend for Frontend):** Intermedia a comunicação pesada com a API do GitHub (cálculo de commits e linguagens) fazendo cache no Redis por 24h para evitar limitação de uso (Rate Limit).
 
-# Rodar em modo desenvolvimento (http://localhost:5173)
-npm run dev
+## ✨ Principais Features
 
-# Build de produção
-npm run build
+1. **Estudos de Caso (React Portals):**
+   Os detalhes de cada projeto ("Case Studies") são renderizados em um Modal de alto nível. Utilizando `createPortal`, o componente é injetado diretamente na raiz do DOM (`document.body`), o que evita colisões de `z-index` e mantém a acessibilidade perfeita.
 
-# Pré-visualizar o build
-npm run preview
-```
+2. **Custom Cursor Inteligente:**
+   Um cursor personalizado que rastreia o movimento do mouse, expandindo ao passar sobre links e botões. Uma verificação via `matchMedia('(pointer: coarse)')` garante que os _EventListeners_ de movimento sejam desativados em telas Touch (celulares e tablets), economizando ciclos de CPU e bateria do usuário.
 
----
-
-## 🗂️ Estrutura de pastas
-
-```
-src/
-├── App.tsx                   # Componente raiz — monta as seções na ordem correta
-├── main.tsx                  # Entry point do React
-├── index.css                 # Design tokens globais (variáveis CSS, fontes, aurora)
-│
-├── features/                 # Seções da página (organizadas por feature)
-│   ├── hero/
-│   │   └── HeroSection.tsx   # Saudação animada com anime.js (typing loop)
-│   ├── about/
-│   │   └── AboutSection.tsx  # Foto, bio profissional e estatísticas dinâmicas
-│   ├── projects/
-│   │   ├── ProjectsSection.tsx
-│   │   └── projects.data.ts  # ⭐ Single Source of Truth dos projetos
-│   ├── skills/
-│   │   └── SkillsSection.tsx # Stack técnica com ícones Devicon
-│   ├── github/
-│   │   └── GitHubSection.tsx # Dados em tempo real via GitHub REST API
-│   └── contact/
-│       └── ContactSection.tsx # Formulário de contato (via mailto)
-│
-└── shared/                   # Componentes e utilitários reutilizáveis
-    ├── components/ui/
-    │   ├── Navbar.tsx         # Navegação fixa com links de âncora
-    │   └── Footer.tsx         # Rodapé com links sociais e voltar ao topo
-    ├── hooks/                 # (reservado para hooks customizados futuros)
-    └── utils/                 # (reservado para utilitários futuros)
-```
-
----
-
-## 📐 Convenções de arquitetura
-
-### Feature-first
-Cada seção da página vive em sua própria pasta dentro de `features/`. Isso mantém a responsabilidade isolada — o código de `hero` não interfere no de `github`.
-
-### Single Source of Truth
-Os projetos são declarados **apenas** em `projects.data.ts`. Tanto `ProjectsSection` quanto `AboutSection` (que conta o total) importam desse arquivo. Nunca duplique dados de projetos em outros lugares.
-
-```ts
-// ✅ Correto: importar do arquivo central
-import { PROJECTS } from '../projects/projects.data'
-
-// ❌ Errado: declarar projetos em dois lugares
-const projects = [{ title: '...' }]
-```
-
-### Componentes sem lógica de negócio
-Os componentes de `features/` são responsáveis apenas por **renderizar**. Qualquer lógica (cálculos, chamadas de API) deve ficar em `hooks/` ou `utils/` quando crescer.
-
----
-
-## 🎬 Animações (Anime.js)
-
-A `HeroSection` utiliza duas timelines encadeadas:
-
-1. **Entrada** (`entrance`) — roda **uma vez**: badge, subtítulo e botões surgem.
-2. **Loop** (`typingLoop`) — roda **infinitamente**: o texto da saudação digita e apaga.
-
-```
-[entrada única]
-  badge aparece → letras digitam → nome revela → subtítulo + botões surgem
-
-[loop ∞]
-  letras digitam → nome revela → pausa 2.5s → nome apaga → letras somem → ...
-```
-
-> **Por que `animejs@3` e não v4?** A v4 foi completamente reescrita e não possui `export default`. A v3 é estável, bem documentada e compatível com o padrão de importação `import anime from 'animejs'`.
-
----
-
-## 🌐 APIs externas
-
-| API | Uso | Autenticação |
-|---|---|---|
-| `api.github.com/users/:username` | Dados do perfil (repos, data de criação) | Pública (sem token) |
-| `api.github.com/users/:username/events/public` | Contribuições do mês atual | Pública (sem token) |
-| `ghchart.rshah.org/:username` | Gráfico de contribuições (imagem SVG) | Nenhuma |
-
-> **Limitação:** A API pública do GitHub limita **60 requisições/hora por IP** sem token. Para uso autenticado (sem limite), é necessário um backend com token seguro.
-
----
-
-## 🖌️ Design System
-
-As variáveis de design estão definidas em `index.css`:
-
-| Variável | Valor | Uso |
-|---|---|---|
-| `--accent-cyan` | `#00d1ff` | Cor primária de destaque |
-| `--accent-soft` | `#7b8ff5` | Gradientes e destaques secundários |
-| `--text-primary` | `#f1f5f9` | Texto principal |
-| `--text-secondary` | `#94a3b8` | Texto secundário |
-| `--text-muted` | `#475569` | Texto de menor hierarquia |
-
----
-
-## 📋 Próximos passos (backlog)
-
-- [ ] **Backend Node.js** — Express + Nodemailer para o formulário de contato
-- [ ] **Token GitHub** — chamadas autenticadas via backend (sem limite de rate)
-- [ ] **SEO** — meta tags dinâmicas com `react-helmet`
-- [ ] **Deploy** — pipeline na Vercel / Netlify
-- [ ] **Foto real** — adicionar imagem em `public/images/perfil-port.png`
-- [ ] **Testes** — unitários para `countMonthlyContributions` em `GitHubSection`
-# Build qui 21 mai 2026 15:12:31 -03
+3. **Integração Backend (GitHub Insights):**
+   As estatísticas do GitHub (Linguagens, Streaks, Último Commit) não chamam a API do GitHub diretamente pelo front. O Frontend consome a minha API Backend privada, que faz o cálculo pesado das estatísticas, as empacota em um JSON e faz o cache no Redis.
