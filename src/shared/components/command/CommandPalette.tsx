@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { Command } from "cmdk";
 import { m, AnimatePresence } from "framer-motion";
 import { useCommandStore } from "../../stores/useCommandStore";
-import { User, Briefcase, FileText, Mail, Moon, Sun } from "lucide-react";
+import { Briefcase, FileText, Mail, Sun } from "lucide-react";
 import { toast } from "sonner";
 
 export function CommandPalette() {
