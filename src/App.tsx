@@ -1,6 +1,8 @@
+import { Toaster } from "sonner";
 import { LazyMotion, domAnimation } from "framer-motion";
 import { SEO } from "./shared/components/seo/SEO";
 import { CustomCursor } from "./shared/components/cursor/CustomCursor";
+import { CommandPalette } from "./shared/components/command/CommandPalette";
 import { Navbar } from "./shared/components/ui/Navbar";
 import { HeroSection } from "./features/hero/HeroSection";
 import { AboutSection } from "./features/about/AboutSection";
@@ -14,8 +16,10 @@ function App() {
   return (
     <LazyMotion features={domAnimation} strict>
       <SEO />
+      <Toaster theme="dark" position="top-right" />
       <div className="aurora-bg min-h-screen cursor-none">
         <CustomCursor />
+        <CommandPalette />
         <Navbar />
 
         <main className="relative z-10 pt-32 text-center">
