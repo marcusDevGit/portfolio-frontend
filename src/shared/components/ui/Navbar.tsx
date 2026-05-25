@@ -1,4 +1,6 @@
 import { useCursorStore } from "../../stores/useCursorStore";
+import { useThemeStore } from "../../stores/useThemeStore";
+import { Sun, Moon } from "lucide-react";
 
 const NAV_LINKS = [
   { label: "Sobre", href: "#about" },
@@ -9,19 +11,20 @@ const NAV_LINKS = [
 ];
 export function Navbar() {
   const setHovering = useCursorStore((state) => state.setHovering);
+  const { theme, toggleTheme } = useThemeStore();
   return (
     <header className="fixed top-6 left-0 right-0 z-50 flex justify-center px-4">
-      <nav className="rounded-full px-6 py-3 flex items-center gap-8 bg-[rgba(11,16,32,0.6)] backdrop-blur-md border border-white/10">
-        <a className="font-display font-bold text-sm tracking-widest text-white uppercase">
+      <nav className="rounded-full px-6 py-3 flex items-center gap-8 bg-(--bg-card) backdrop-blur-md border border-(--border-subtle)">
+        <a className="font-display font-bold text-sm tracking-widest text-(--text-primary) uppercase">
           Marcus
         </a>
-        <div className="w-px h-4 bg-white/10" />
+        <div className="w-px h-4 bg-(--border-subtle)/10" />
         <ul className="flex items-center gap-6 list-none">
           {NAV_LINKS.map((link) => (
             <li key={link.href}>
               <a
                 href={link.href}
-                className="text-sm font-body text-(--text-secondary) hover:text-white transition-colors duration-200"
+                className="text-sm font-body text-(--text-secondary) hover:text-(--text-primary) transition-colors duration-200"
                 onMouseEnter={() => setHovering(true)}
                 onMouseLeave={() => setHovering(false)}
               >
@@ -30,10 +33,19 @@ export function Navbar() {
             </li>
           ))}
         </ul>
-        <div className="w-px h-4 bg-white/10" />
+        <div className="w-px h-4 bg-(--border-subtle)" />
+        <button
+          onClick={toggleTheme}
+          onMouseEnter={() => setHovering(true)}
+          onMouseLeave={() => setHovering(false)}
+          className="p-2 rounded-full text-(--text-secondary) hover:text-(--text-primary) hover:bg-(--border-subtle) transition-all duration-300 cursor-pointer"
+          aria-label="Alternar Tema"
+        >
+          {theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
+        </button>
         <a
           href="#contact"
-          className="text-xs font-display font-semibold uppercase tracking-widest px-4 py-2 rounded-full bg-(--accent-cyan) text-[#050816] hover:shadow-(--glow-cyan) transition-all duration-300"
+          className="text-xs font-display font-semibold uppercase tracking-widest px-4 py-2 rounded-full bg-(--accent-cyan) text-black hover:shadow-(--glow-cyan) transition-all duration-300"
           onMouseEnter={() => setHovering(true)}
           onMouseLeave={() => setHovering(false)}
         >

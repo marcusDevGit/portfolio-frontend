@@ -130,3 +130,21 @@ body {
     transform: translateZ(0);
     will-change: transform;
 }
+/* ── MODO CLARO (THEME SWITCHER) ────────────────────────── */
+.light {
+    /* Fundos */
+    --bg-base: #f8f9fa; /* Gelo premium */
+    --bg-surface: #ffffff;
+    --bg-card: rgba(255, 255, 255, 0.7);
+    --bg-card-solid: #f1f5f9;
+    
+    /* Texto */
+    --text-primary: #1e293b;
+    --text-secondary: #475569;
+    --text-muted: #64748b;
+    
+    /* Bordas */
+    --border-subtle: rgba(0, 0, 0, 0.08);
+    --border-bright: rgba(0, 0, 0, 0.15);
+    --border-dark: rgba(0, 0, 0, 0.05);
+}

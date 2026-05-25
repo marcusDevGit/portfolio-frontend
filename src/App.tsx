@@ -1,3 +1,4 @@
+import { useThemeStore } from "./shared/stores/useThemeStore";
 import { Toaster } from "sonner";
 import { LazyMotion, domAnimation } from "framer-motion";
 import { SEO } from "./shared/components/seo/SEO";
@@ -11,8 +12,19 @@ import { SkillsSection } from "./features/skills/SkillsSection";
 import { GitHubSection } from "./features/github/GitHubSection";
 import { ContactSection } from "./features/contact/ContactSection";
 import { Footer } from "./shared/components/ui/Footer";
+import { useEffect } from "react";
 
 function App() {
+  const theme = useThemeStore((state) => state.theme);
+  useEffect(() => {
+    const root = window.document.documentElement;
+    if (theme === "light") {
+      root.classList.add("light");
+    } else {
+      root.classList.remove("light");
+    }
+  }, [theme]);
+
   return (
     <LazyMotion features={domAnimation} strict>
       <SEO />

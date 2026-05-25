@@ -47,7 +47,7 @@ export function ProjectsSection() {
             <span className="text-xs font-display uppercase tracking-widest text-(--accent-cyan) mb-4 block">
               Portfólio
             </span>
-            <h2 className="font-display font-bold text-3xl md:text-5xl text-white mb-4">
+            <h2 className="font-display font-bold text-3xl md:text-5xl text-(--text-primary) mb-4">
               Projetos em destaque
             </h2>
             <p className="font-body text-(--text-secondary) max-w-xl mx-auto">
@@ -61,7 +61,7 @@ export function ProjectsSection() {
               {Array.from({ length: 3 }).map((_, i) => (
                 <div
                   key={i}
-                  className="bg-[rgba(11,16,32,0.6)] border border-white/10 rounded-2xl p-6 animate-pulse h-48"
+                  className="bg-(--bg-card) border border-(--border-subtle) rounded-2xl p-6 animate-pulse h-48"
                 />
               ))}
             </div>
@@ -104,8 +104,8 @@ function ProjectCard({
     <article
       className="
         group relative flex flex-col
-        bg-[rgba(11,16,32,0.6)] backdrop-blur-md
-        border border-white/10 rounded-2xl p-6
+        bg-(--bg-card) backdrop-blur-md
+        border border-(--border-subtle) rounded-2xl p-6
         hover:border-(--accent-cyan)/30
         transition-all duration-300
       "
@@ -116,7 +116,7 @@ function ProjectCard({
         <div className="absolute inset-0 rounded-2xl bg-linear-to-br from-(--accent-cyan)/5 to-transparent pointer-events-none" />
       )}
 
-      <h3 className="font-display font-semibold text-lg text-white mb-3 group-hover:text-(--accent-cyan) transition-colors duration-200">
+      <h3 className="font-display font-semibold text-lg text-(--text-primary) mb-3 group-hover:text-(--accent-cyan) transition-colors duration-200">
         {project.title}
       </h3>
       <p className="font-body text-sm text-(--text-secondary) leading-relaxed mb-4 flex-1">
@@ -126,7 +126,7 @@ function ProjectCard({
         {project.techStack.map((tech) => (
           <span
             key={tech}
-            className="text-[10px] font-mono uppercase tracking-wider text-(--text-muted) px-2 py-1 rounded border border-white/10"
+            className="text-[10px] font-mono uppercase tracking-wider text-(--text-muted) px-2 py-1 rounded border border-(--border-subtle)"
           >
             {tech}
           </span>
@@ -139,7 +139,7 @@ function ProjectCard({
             href={project.githubUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-xs font-display font-semibold uppercase tracking-widest text-(--text-secondary) hover:text-white transition-colors duration-200"
+            className="text-xs font-display font-semibold uppercase tracking-widest text-(--text-secondary) hover:text-(--text-primary) transition-colors duration-200"
           >
             GitHub →
           </a>
@@ -149,14 +149,14 @@ function ProjectCard({
             href={project.demoUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-xs font-display font-semibold uppercase tracking-widest text-(--accent-cyan) hover:text-white transition-colors duration-200"
+            className="text-xs font-display font-semibold uppercase tracking-widest text-(--accent-cyan) hover:text-(--text-primary) transition-colors duration-200"
           >
             Demo →
           </a>
         )}
         <button
           onClick={onSelect}
-          className="ml-auto text-[10px] sm:text-xs font-display font-semibold uppercase tracking-widest text-white bg-white/10 border border-white/20 hover:bg-white/20 px-3 py-1.5 rounded transition-all duration-300"
+          className="ml-auto text-[10px] sm:text-xs font-display font-semibold uppercase tracking-widest text-(--text-primary) bg-white/10 border border-(--border-subtle) hover:bg-white/20 px-3 py-1.5 rounded transition-all duration-300"
         >
           Ler Case Study
         </button>

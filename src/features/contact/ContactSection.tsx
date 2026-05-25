@@ -57,7 +57,7 @@ export function ContactSection() {
             <span className="text-xs font-display uppercase tracking-widest text-(--accent-cyan) mb-4 block">
               Contato
             </span>
-            <h2 className="font-display font-bold text-3xl md:text-5xl text-white mb-4">
+            <h2 className="font-display font-bold text-3xl md:text-5xl text-(--text-primary) mb-4">
               Vamos conversar
             </h2>
             <p className="font-body text-(--text-secondary)">
@@ -68,7 +68,7 @@ export function ContactSection() {
 
           <form
             onSubmit={handleSubmit}
-            className="flex flex-col gap-4 bg-[rgba(11,16,32,0.6)] backdrop-blur-md border border-white/10 rounded-2xl p-8"
+            className="flex flex-col gap-4 bg-(--bg-card) backdrop-blur-md border border-(--border-subtle) rounded-2xl p-8"
           >
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="flex flex-col gap-1.5">
@@ -86,7 +86,7 @@ export function ContactSection() {
                   value={formData.name}
                   onChange={handleChange}
                   placeholder="Seu nome"
-                  className="bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-sm font-body text-white placeholder:text-(--text-muted) focus:outline-none focus:border-(--accent-cyan)/50 transition-colors duration-200"
+                  className="bg-(--bg-card) border border-(--border-subtle) rounded-lg px-4 py-3 text-sm font-body text-(--text-primary) placeholder:text-(--text-muted) focus:outline-none focus:border-(--accent-cyan)/50 transition-colors duration-200"
                 />
               </div>
 
@@ -105,7 +105,7 @@ export function ContactSection() {
                   value={formData.email}
                   onChange={handleChange}
                   placeholder="seu@email.com"
-                  className="bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-sm font-body text-white placeholder:text-(--text-muted) focus:outline-none focus:border-(--accent-cyan)/50 transition-colors duration-200"
+                  className="bg-(--bg-card) border border-(--border-subtle) rounded-lg px-4 py-3 text-sm font-body text-(--text-primary) placeholder:text-(--text-muted) focus:outline-none focus:border-(--accent-cyan)/50 transition-colors duration-200"
                 />
               </div>
             </div>
@@ -125,7 +125,7 @@ export function ContactSection() {
                 value={formData.message}
                 onChange={handleChange}
                 placeholder="Olá Marcus, gostaria de..."
-                className="bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-sm font-body text-white placeholder:text-(--text-muted) focus:outline-none focus:border-(--accent-cyan)/50 transition-colors duration-200 resize-none"
+                className="bg-(--bg-card) border border-(--border-subtle) rounded-lg px-4 py-3 text-sm font-body text-(--text-primary) placeholder:text-(--text-muted) focus:outline-none focus:border-(--accent-cyan)/50 transition-colors duration-200 resize-none"
               />
             </div>
 

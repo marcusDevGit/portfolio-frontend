@@ -31,15 +31,12 @@ export function CustomCursor() {
         translateY: "-50%",
         left: springX,
         top: springY,
+        mixBlendMode: "difference",
       }}
       animate={{
         scale: isHovering ? 2 : 1,
-        backgroundColor: isHovering
-          ? "rgba(99, 179, 237, 0.25)"
-          : "rgba(99, 179, 237, 0.6)",
-        borderColor: isHovering
-          ? "rgba(99, 179, 237, 0.8)"
-          : "rgba(99, 179, 237, 0.4)",
+        backgroundColor: "rgba(255,255,255, 1)",
+        borderColor: "rgba(255,255,255, 1)",
       }}
       transition={{ type: "spring", stiffness: 400, damping: 30 }}
       className="

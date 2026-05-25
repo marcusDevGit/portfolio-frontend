@@ -54,7 +54,7 @@ export function SkillsSection() {
             <span className="text-xs font-display uppercase tracking-widest text-(--accent-cyan) mb-4 block ">
               Habilidades{" "}
             </span>
-            <h2 className="font-display font-bold text-3xl md:text-5xl text-white mb-4">
+            <h2 className="font-display font-bold text-3xl md:text-5xl text-(--text-primary) mb-4">
               Stack técnica
             </h2>
             <p className="font-body text-(--text-secondary) max-w-xl mx-auto">
@@ -77,13 +77,13 @@ function SkillCategoryCard({ category }: { category: SkillCategory }) {
   return (
     <div
       className="
-      bg-[rgba(11,16,32,0.6)] backdrop-blur-md
-      border border-white/10 rounded-2xl p-6
+      bg-(--bg-card) backdrop-blur-md
+      border border-(--border-subtle) rounded-2xl p-6
       hover:border-(--accent-cyan)/20
       transition-all duration-300
     "
     >
-      <h3 className="font-display font-semibold text-white text-lg mb-1">
+      <h3 className="font-display font-semibold text-(--text-primary) text-lg mb-1">
         {category.title}
       </h3>
       <p className="text-xs text-(--text-muted) mb-6">{category.description}</p>
@@ -102,14 +102,14 @@ function SkillItem({ skill }: { skill: Skill }) {
       className="
       group flex flex-col items-center gap-2 p-3 rounded-xl
       border border-transparent
-      hover:border-white/10 hover:bg-white/5
+      hover:border-(--border-subtle) hover:bg-(--bg-card)
       transition-all duration-200 cursor-default
     "
     >
       <i
         className={`${skill.icon} ${skill.colored ? "colored" : "text-(--text-secondary)"} text-3xl group-hover:scale-110 transition-transform duration-200`}
       />
-      <span className="text-[10px] font-mono text-(--text-muted) text-center leading-tight group-hover:text-white transition-colors duration-200">
+      <span className="text-[10px] font-mono text-(--text-muted) text-center leading-tight group-hover:text-(--text-primary) transition-colors duration-200">
         {skill.name}
       </span>
     </div>
