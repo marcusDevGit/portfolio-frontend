@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import { m, useScroll, useTransform } from "framer-motion";
 import anime from "animejs";
+import { HeroBackground } from "./HeroBackground";
 
 // Dois segmentos para aplicar estilos diferentes:
 // o nome recebe gradiente cyan, o resto fica branco
@@ -143,8 +144,9 @@ export function HeroSection() {
     <section
       ref={sectionRef}
       id="top"
-      className="relative z-10 min-h-screen flex flex-col items-center justify-center text-center px-4 "
+      className="relative z-10 min-h-screen flex flex-col items-center justify-center text-center px-4 overflow-hidden "
     >
+      <HeroBackground scrollYProgress={scrollYProgress} />
       <m.div
         ref={badgeref}
         style={{ opacity: 0, y: badgeY }}

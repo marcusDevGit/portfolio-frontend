@@ -11,11 +11,28 @@ import { ProjectsSection } from "./features/projects/ProjectsSection";
 import { SkillsSection } from "./features/skills/SkillsSection";
 import { GitHubSection } from "./features/github/GitHubSection";
 import { ContactSection } from "./features/contact/ContactSection";
+import { TerminalSection } from "./features/terminal/TerminalSection";
+import { useTerminalStore } from "./shared/stores/useTerminalStore";
 import { Footer } from "./shared/components/ui/Footer";
 import { useEffect } from "react";
 
 function App() {
   const theme = useThemeStore((state) => state.theme);
+  const toggleTerminal = useTerminalStore((state) => state.toggle);
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "`" && e.ctrlKey) {
+        e.preventDefault();
+        toggleTerminal();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [toggleTerminal]);
+
   useEffect(() => {
     const root = window.document.documentElement;
     if (theme === "light") {
@@ -32,6 +49,7 @@ function App() {
       <div className="aurora-bg min-h-screen cursor-none">
         <CustomCursor />
         <CommandPalette />
+        <TerminalSection />
         <Navbar />
 
         <main className="relative z-10 pt-32 text-center">
