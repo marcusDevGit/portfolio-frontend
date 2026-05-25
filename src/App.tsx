@@ -28,7 +28,7 @@ function App() {
   return (
     <LazyMotion features={domAnimation} strict>
       <SEO />
-      <Toaster theme="dark" position="top-right" />
+      <Toaster theme={theme} position="top-right" />
       <div className="aurora-bg min-h-screen cursor-none">
         <CustomCursor />
         <CommandPalette />
