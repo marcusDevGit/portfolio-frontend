@@ -3,12 +3,14 @@ import { Command } from "cmdk";
 import { m, AnimatePresence } from "framer-motion";
 import { useCommandStore } from "../../stores/useCommandStore";
 import { useThemeStore } from "../../stores/useThemeStore";
-import { Briefcase, FileText, Mail, Sun } from "lucide-react";
+import { useTerminalStore } from "../../stores/useTerminalStore";
+import { Briefcase, FileText, Mail, Sun, Terminal } from "lucide-react";
 import { toast } from "sonner";
 
 export function CommandPalette() {
   const { isOpen, close, toggle } = useCommandStore();
   const toggleTheme = useThemeStore((state) => state.toggleTheme);
+  const openTerminal = useTerminalStore((state) => state.open);
 
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
@@ -31,7 +33,7 @@ export function CommandPalette() {
   return (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-start justify-center pt-[15vh] px-4">
+        <div className="fixed inset-0 z-100 flex items-start justify-center pt-[15vh] px-4">
           <m.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -111,6 +113,16 @@ export function CommandPalette() {
                     className="flex items-center gap-3 px-3 py-3 mt-1 text-sm text-(--text-secondary) rounded-lg cursor-pointer data-[selected=true]:bg-(--border-subtle) data-[selected=true]:text-(--text-primary) transition-colors"
                   >
                     <Sun size={16} /> Alternar Tema Escuro/Claro
+                  </Command.Item>
+                  <Command.Item
+                    onSelect={() =>
+                      runCommand(() => {
+                        openTerminal();
+                      })
+                    }
+                    className="flex items-center gap-3 px-3 py-3 mt-1 text-sm text-(--text-secondary) rounded-lg cursor-pointer data-[selected=true]:bg-(--border-subtle) data-[selected=true]:text-(--text-primary) transition-colors"
+                  >
+                    <Terminal size={16} /> Abrir Terminal Interativo
                   </Command.Item>
                 </Command.Group>
               </Command.List>
