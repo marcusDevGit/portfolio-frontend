@@ -34,7 +34,7 @@ export function CommandPalette() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+            className="absolute inset-0 bg-black/20 dark:bg-black/50 backdrop-blur-sm"
           />
 
           <m.div
@@ -42,7 +42,7 @@ export function CommandPalette() {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: -10 }}
             transition={{ duration: 0.15, ease: "easeOut" }}
-            className="relative w-full max-w-xl overflow-hidden rounded-2xl bg-[#0b1020]/95 border border-white/10 shadow-2xl backdrop-blur-xl"
+            className="relative w-full max-w-xl overflow-hidden rounded-2xl bg-(--bg-surface)/95 border border-(--border-subtle) shadow-2xl backdrop-blur-xl"
           >
             <Command
               className=" w-full"
@@ -55,7 +55,7 @@ export function CommandPalette() {
                 <Command.Input
                   autoFocus
                   placeholder="O que você procura?"
-                  className="w-full bg-transparent py-4 text-white placeholder:text-zinc-500 focus:outline-none text-lg font-body"
+                  className="w-full bg-transparent py-4 text-(--text-primary) placeholder:text-(--text-muted) focus:outline-none text-lg font-body"
                 />
               </div>
               <Command.List className="max-h-75 overflow-y-auto p-2 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
@@ -70,7 +70,7 @@ export function CommandPalette() {
                     onSelect={() =>
                       runCommand(() => (window.location.hash = "#about"))
                     }
-                    className="flex items-center gap-3 px-3 py-3 mt-2 text-sm text-zinc-300 rounded-lg cursor-pointer data-[selected=true]:bg-white/10 data-[selected=true]:text-white transition-colors"
+                    className="flex items-center gap-3 px-3 py-3 mt-2 text-sm text-zinc-300 rounded-lg cursor-pointer data-[selected=true]:bg-white/10 data-[selected=true]:text-(--text-primary) transition-colors"
                   >
                     <Briefcase size={16} /> Meus Projetos
                   </Command.Item>
@@ -83,7 +83,7 @@ export function CommandPalette() {
                     onSelect={() =>
                       runCommand(() => window.open("/curriculo.pdf", "_blank"))
                     }
-                    className="flex items-center gap-3 px-3 py-3 mt-2 text-sm text-zinc-300 rounded-lg cursor-pointer data-[selected=true]:bg-white/10 data-[selected=true]:text-white transition-colors"
+                    className="flex items-center gap-3 px-3 py-3 mt-2 text-sm text-zinc-300 rounded-lg cursor-pointer data-[selected=true]:bg-white/10 data-[selected=true]:text-(--text-primary) transition-colors"
                   >
                     <FileText size={16} /> Baixar Currículo
                   </Command.Item>
@@ -96,7 +96,7 @@ export function CommandPalette() {
                         );
                       })
                     }
-                    className="flex items-center gap-3 px-3 py-3 mt-1 text-sm text-zinc-300 rounded-lg cursor-pointer data-[selected=true]:bg-white/10 data-[selected=true]:text-white transition-colors"
+                    className="flex items-center gap-3 px-3 py-3 mt-1 text-sm text-zinc-300 rounded-lg cursor-pointer data-[selected=true]:bg-white/10 data-[selected=true]:text-(--text-primary) transition-colors"
                   >
                     <Mail size={16} /> Copiar E-mail
                   </Command.Item>
@@ -104,7 +104,7 @@ export function CommandPalette() {
                     onSelect={() =>
                       runCommand(() => alert("Em breve: Switcher de Tema!"))
                     }
-                    className="flex items-center gap-3 px-3 py-3 mt-1 text-sm text-zinc-300 rounded-lg cursor-pointer data-[selected=true]:bg-white/10 data-[selected=true]:text-white transition-colors"
+                    className="flex items-center gap-3 px-3 py-3 mt-1 text-sm text-zinc-300 rounded-lg cursor-pointer data-[selected=true]:bg-white/10 data-[selected=true]:text-(--text-primary) transition-colors"
                   >
                     <Sun size={16} /> Alternar Tema Escuro/Claro
                   </Command.Item>

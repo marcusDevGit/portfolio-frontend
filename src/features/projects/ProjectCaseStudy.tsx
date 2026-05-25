@@ -19,6 +19,16 @@ export function ProjectCaseStudyModal({
   const setHovering = useCursorStore((state) => state.setHovering);
 
   useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        onClose();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isOpen, onClose]);
+
+  useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden";
     } else {
@@ -47,11 +57,11 @@ export function ProjectCaseStudyModal({
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
             transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-            className="relative w-full max-w-3xl bg-[rgba(11,16,32,0.95)] border border-white/10 rounded-2xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden"
+            className="relative w-full max-w-3xl bg-[rgba(11,16,32,0.95)] border border-(--border-subtle) rounded-2xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden"
           >
-            <div className="flex items-start justify-between p-6 border-b border-white/10">
+            <div className="flex items-start justify-between p-6 border-b border-(--border-subtle)">
               <div>
-                <h2 className="text-2xl font-bold text-white mb-2 font-display">
+                <h2 className="text-2xl font-bold text-(--text-primary) mb-2 font-display">
                   {project.title}
                 </h2>
                 <div className="flex  flex-wrap gap-2">
@@ -69,11 +79,11 @@ export function ProjectCaseStudyModal({
                 onClick={onClose}
                 onMouseEnter={() => setHovering(true)}
                 onMouseLeave={() => setHovering(false)}
-                className="p-2 text-zinc-400 hover:text-white hover:bg-white/10 rounded-b-full transition-colors"
+                className="p-2 text-zinc-400 hover:text-(--text-primary) hover:bg-white/10 rounded-b-full transition-colors"
                 aria-label="Fechar Modal"
               >
                 <svg
-                  className="w-5 h-5 text-zinc-400 group-hover:text-white transition-colors"
+                  className="w-5 h-5 text-zinc-400 group-hover:text-(--text-primary) transition-colors"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -131,7 +141,7 @@ export function ProjectCaseStudyModal({
               )}
             </div>
             {/* Footer Fixo */}
-            <div className="p-6 border-t border-white/10 flex flex-col sm:flex-row gap-4 bg-black/40">
+            <div className="p-6 border-t border-(--border-subtle) flex flex-col sm:flex-row gap-4 bg-(--bg-card)">
               {project.demoUrl && (
                 <a
                   href={project.demoUrl}
@@ -139,7 +149,7 @@ export function ProjectCaseStudyModal({
                   rel="noreferrer"
                   onMouseEnter={() => setHovering(true)}
                   onMouseLeave={() => setHovering(false)}
-                  className="flex-1 bg-(--accent-cyan)/10 text-(--accent-cyan) border border-(--accent-cyan)/50 text-center font-bold py-3 rounded-lg hover:bg-(--accent-cyan) hover:text-black transition-all"
+                  className="flex-1 bg-(--accent-cyan) text-[#050816] border border-(--accent-cyan) text-center font-bold py-3 rounded-lg hover:bg-(--accent-cyan) hover:text-black transition-all"
                 >
                   Ver Aplicação Ao Vivo
                 </a>
@@ -151,7 +161,7 @@ export function ProjectCaseStudyModal({
                   rel="noreferrer"
                   onMouseEnter={() => setHovering(true)}
                   onMouseLeave={() => setHovering(false)}
-                  className="flex-1 bg-white/5 text-white text-center font-bold py-3 rounded-lg hover:bg-white/10 border border-white/10 transition-all"
+                  className="flex-1 bg-(--text-primary) text-(--bg-base) text-center font-bold py-3 rounded-lg hover:opacity-80 border border-(--border-subtle) transition-all"
                 >
                   Acessar Código-Fonte
                 </a>

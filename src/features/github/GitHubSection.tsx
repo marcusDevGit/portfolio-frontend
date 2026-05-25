@@ -1,3 +1,4 @@
+import { useThemeStore } from "../../shared/stores/useThemeStore";
 import { useEffect, useState } from "react";
 import { ScrollReveal } from "../../shared/components/motion/ScrollReveal";
 import { useCursorStore } from "../../shared/stores/useCursorStore";
@@ -25,6 +26,7 @@ export function GitHubSection() {
   const [imgError, setImgError] = useState(false);
 
   const setHovering = useCursorStore((state) => state.setHovering);
+  const theme = useThemeStore((state) => state.theme);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -55,7 +57,7 @@ export function GitHubSection() {
             <span className="text-xs font-display uppercase tracking-widest text-(--accent-cyan) mb-4 block">
               Open Source
             </span>
-            <h2 className="font-display font-bold text-3xl md:text-5xl text-white mb-4">
+            <h2 className="font-display font-bold text-3xl md:text-5xl text-(--text-primary) mb-4">
               Engenharia Aberta
             </h2>
             <p className="font-body text-(--text-secondary) max-w-xl mx-auto">
@@ -69,11 +71,11 @@ export function GitHubSection() {
                 alt="Calendário de contribuições do GitHub de Marcus"
                 loading="lazy"
                 decoding="async"
-                className="w-full rounded-xl border border-white/10 opacity-90 max-block-screen"
+                className="w-full rounded-xl border border-(--border-subtle) opacity-90 max-block-screen"
                 onError={() => setImgError(true)}
               />
             ) : (
-              <div className="w-full rounded-2xl border border-white/10 bg-[rgba(11,16,32,0.6)] p-8 text-center">
+              <div className="w-full rounded-2xl border border-(--border-subtle) bg-(--bg-card) p-8 text-center">
                 Gráfico de contribuições temporariamente indisponível.
               </div>
             )}
@@ -99,7 +101,7 @@ export function GitHubSection() {
                         key={lang.name}
                         className="flex justify-between items-center border-b border-white/5 pb-2"
                       >
-                        <span className="text-white font-mono text-sm">
+                        <span className="text-(--text-primary) font-mono text-sm">
                           {lang.name}
                         </span>
                       </div>
@@ -109,7 +111,7 @@ export function GitHubSection() {
                 {/* GitHub Streak */}
                 <div className="bg-white/2 border border-white/5 rounded-2xl p-6 flex items-center justify-center">
                   <img
-                    src={`https://github-readme-streak-stats.herokuapp.com/?user=${GITHUB_USERNAME}&theme=dark&hide_border=true&background=00000000&ring=06b6d4&fire=06b6d4&currStreakNum=ffffff`}
+                    src={`https://github-readme-streak-stats.herokuapp.com/?user=${GITHUB_USERNAME}&theme=${theme === "light" ? "default" : "dark"}&hide_border=true&background=00000000&ring=00D1FF&fire=00D1FF&currStreakNum=${theme === "light" ? "1e293b" : "ffffff"}`}
                     alt="GitHub Streak Stats"
                     loading="lazy"
                     decoding="async"
@@ -129,9 +131,9 @@ export function GitHubSection() {
                     rel="noreferrer"
                     onMouseEnter={() => setHovering(true)}
                     onMouseLeave={() => setHovering(false)}
-                    className="group max-w-3xl mx-auto w-full p-6 sm:p-8 rounded-xl border border-white/10 bg-black/40 hover:bg-white/5 hover:border-(--accent-cyan)/50 transition-all flex flex-col"
+                    className="group max-w-3xl mx-auto w-full p-6 sm:p-8 rounded-xl border border-(--border-subtle) bg-(--bg-card) hover:bg-(--bg-card) hover:border-(--accent-cyan)/50 transition-all flex flex-col"
                   >
-                    <h4 className="text-white font-bold text-xl mb-3 group-hover:text-(--accent-cyan) transition-colors">
+                    <h4 className="text-(--text-primary) font-bold text-xl mb-3 group-hover:text-(--accent-cyan) transition-colors">
                       {latestRepo.name}
                     </h4>
                     <p className="text-sm text-zinc-500 line-clamp-3 mb-6 flex-1">
@@ -159,7 +161,7 @@ export function GitHubSection() {
               href={`https://github.com/${GITHUB_USERNAME}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-full border border-white/20 text-(--text-primary) font-display font-semibold text-sm uppercase tracking-widest hover:border-(--accent-cyan)/50 hover:text-white transition-all duration-300"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-full border border-(--border-subtle) text-(--text-primary) font-display font-semibold text-sm uppercase tracking-widest hover:border-(--accent-cyan)/50 hover:text-(--text-primary) transition-all duration-300"
             >
               Ver perfil completo
               <span aria-hidden="true">→</span>

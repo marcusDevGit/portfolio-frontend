@@ -11,7 +11,7 @@ export function AboutSection() {
             <span className="text-xs font-display uppercase tracking-widest text-(--accent-cyan) mb-4 block">
               Sobre
             </span>
-            <h2 className="font-display font-bold text-3xl md:text-5xl text-white mb-4">
+            <h2 className="font-display font-bold text-3xl md:text-5xl text-(--text-primary) mb-4">
               Quem sou eu
             </h2>
           </div>
@@ -28,7 +28,7 @@ export function AboutSection() {
                   className="
                   relative z-10 w-full h-full
                   rounded-full object-cover
-                  border-2 border-white/10
+                  border-2 border-(--border-subtle)
                 "
                   onError={(e) => {
                     const target = e.currentTarget;
@@ -42,7 +42,7 @@ export function AboutSection() {
                   style={{ display: "none" }}
                   className="
                   relative z-10 w-full h-full
-                  rounded-full border-2 border-white/10
+                  rounded-full border-2 border-(--border-subtle)
                   bg-[rgba(11,16,32,0.8)]
                   flex items-center justify-center
                 "
@@ -56,14 +56,16 @@ export function AboutSection() {
 
             <div
               className="
-            bg-[rgba(11,16,32,0.6)] backdrop-blur-md
-            border border-white/10 rounded-2xl p-8
+            bg-(--bg-card) backdrop-blur-md
+            border border-(--border-subtle) rounded-2xl p-8
           "
             >
               <div className="space-y-4 font-body text-base text-(--text-secondary) leading-relaxed">
                 <p>
                   Desenvolvedor{" "}
-                  <strong className="text-white font-medium">Full Stack</strong>{" "}
+                  <strong className="text-(--text-primary) font-medium">
+                    Full Stack
+                  </strong>{" "}
                   em formação, com foco em aplicações modernas utilizando
                   React.js, Node.js, PostgreSQL e JavaScript. Adiquirindo
                   experiência com desenvolvimento de interfaces responsivas,
@@ -72,7 +74,7 @@ export function AboutSection() {
                 <p>
                   Além da área de tecnologia, minha trajetória profissional
                   desenvolveu habilidades importantes como{" "}
-                  <strong className="text-white font-medium">
+                  <strong className="text-(--text-primary) font-medium">
                     trabalho em equipe, suporte técnico, comunicação.
                   </strong>
                 </p>
@@ -82,7 +84,7 @@ export function AboutSection() {
                 </p>
               </div>
 
-              <div className="grid grid-cols-3 gap-4 mt-8 pt-8 border-t border-white/10">
+              <div className="grid grid-cols-3 gap-4 mt-8 pt-8 border-t border-(--border-subtle)">
                 <div className="text-center">
                   <p className="font-display font-bold text-2xl text-(--accent-cyan)">
                     {PROJECTS.length}

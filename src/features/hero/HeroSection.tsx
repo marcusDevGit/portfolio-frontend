@@ -160,7 +160,7 @@ export function HeroSection() {
       </m.div>
       <m.h1
         style={{ y: titleY }}
-        className="font-display font-bold text-4xl md:text-6xl lg:text-[72px] leading-[1.1] tracking-[-0.04em] text-white mb-6"
+        className="font-display font-bold text-4xl md:text-6xl lg:text-[72px] leading-[1.1] tracking-[-0.04em] text-(--text-primary) mb-6"
       >
         {GREETING_PREFIX.split("").map((char, index) => (
           <span
@@ -191,7 +191,7 @@ export function HeroSection() {
         >
           Desenvolvedor focado em React, Node.js e TypeScript. Construindo
           interfaces modernas e APIs robustas com foco em
-          <strong className="text-white font-medium">
+          <strong className="text-(--text-primary) font-medium">
             {" "}
             segurança e escalabilidade
           </strong>
@@ -211,7 +211,7 @@ export function HeroSection() {
           </a>
           <a
             href="#contact"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-full border border-white/20 text-(--text-primary) font-display font-semibold text-sm uppercase tracking-widest hover:border-white/50 hover:text-white transition-all duration-300"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-full border border-(--border-bright) text-(--text-primary) font-display font-semibold text-sm uppercase tracking-widest hover:border-(--border-bright) hover:text-(--text-primary) transition-all duration-300"
           >
             Entrar em Contato
           </a>
@@ -225,7 +225,7 @@ export function HeroSection() {
         <span className="text-xs text-(--text-muted) tracking-widest uppercase">
           scroll
         </span>
-        <div className="w-px h-12 bg-linear-to-b from-white/20 to-transparent" />
+        <div className="w-px h-12 bg-linear-to-b from-(--border-bright) to-transparent" />
       </div>
     </section>
   );

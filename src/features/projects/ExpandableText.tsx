@@ -22,7 +22,7 @@ export function ExpandableText({ text }: { text: string }) {
         onClick={() => setIsExpanded(!isExpanded)}
         onMouseEnter={() => setHovering(true)}
         onMouseLeave={() => setHovering(false)}
-        className="mt-2 text-[10px] font-bold uppercase tracking-widest text-(--accent-cyan) hover:text-white transition-colors"
+        className="mt-2 text-[10px] font-bold uppercase tracking-widest text-(--accent-cyan) hover:text-(--text-primary) transition-colors"
       >
         {isExpanded ? "Ocultar detalhes" : "Ler detalhes"}
       </button>
