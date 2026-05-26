@@ -4,18 +4,10 @@ import { useTerminalStore } from "../../shared/stores/useTerminalStore";
 import { X, Terminal as TerminalIcon } from "lucide-react";
 import { PROJECTS } from "../projects/projects.data";
 
-interface LogLine {
-  type: "input" | "output";
-  text: string;
-}
-
 export function TerminalSection() {
-  const { isOpen, close } = useTerminalStore();
+  const { isOpen, close, history, setHistory, clearHistory } =
+    useTerminalStore();
   const [inputVal, setInputVal] = useState("");
-  const [history, setHistory] = useState<LogLine[]>([
-    { type: "output", text: "MarcusOs v1.0 - Terminal Interativo" },
-    { type: "output", text: "Digite 'help' para ver os comandos disponíveis." },
-  ]);
 
   const inputRef = useRef<HTMLInputElement>(null);
   const historyEndRef = useRef<HTMLDivElement>(null);
@@ -39,14 +31,16 @@ export function TerminalSection() {
     const command = inputVal.trim();
     if (!command) return;
 
-    const newHistory = [...history, { type: "input" as const, text: command }];
-
     const output = processCommand(command);
 
     if (output === "CLEAR_SCREEN") {
-      setHistory([]);
+      clearHistory();
     } else {
-      setHistory([...newHistory, { type: "output" as const, text: output }]);
+      setHistory([
+        ...history,
+        { type: "input", text: command },
+        { type: "output", text: output },
+      ]);
     }
 
     setInputVal("");

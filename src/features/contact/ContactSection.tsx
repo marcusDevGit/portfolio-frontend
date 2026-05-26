@@ -1,19 +1,10 @@
+import { useContactStore } from "../../shared/stores/useContactStore";
 import React, { useState } from "react";
 import { ScrollReveal } from "../../shared/components/motion/ScrollReveal";
 import { toast } from "sonner";
 
-type ContactFormData = {
-  name: string;
-  email: string;
-  message: string;
-};
-
 export function ContactSection() {
-  const [formData, setFormData] = useState<ContactFormData>({
-    name: "",
-    email: "",
-    message: "",
-  });
+  const { formData, setFormData, resetForm } = useContactStore();
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">(
     "idle",
   );
@@ -22,7 +13,7 @@ export function ContactSection() {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormData({ [name]: value });
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -47,7 +38,7 @@ export function ContactSection() {
         return;
       }
       toast.success("Mensagem enviada com sucesso!");
-      setFormData({ name: "", email: "", message: "" });
+      resetForm();
       setStatus("sent");
       setTimeout(() => setStatus("idle"), 3000);
     } catch {
