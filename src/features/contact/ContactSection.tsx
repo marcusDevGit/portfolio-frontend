@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { ScrollReveal } from "../../shared/components/motion/ScrollReveal";
+import { toast } from "sonner";
 
 type ContactFormData = {
   name: string;
@@ -37,15 +38,22 @@ export function ContactSection() {
           body: JSON.stringify(formData),
         },
       );
+
+      const data = await response.json();
+
       if (!response.ok) {
-        const data = await response.json();
-        alert(data.message);
+        toast.error(data.message || "Erro ao enviar mensagem");
         setStatus("idle");
         return;
       }
+      toast.success("Mensagem enviada com sucesso!");
+      setFormData({ name: "", email: "", message: "" });
       setStatus("sent");
+      setTimeout(() => setStatus("idle"), 3000);
     } catch {
+      toast.error("Não foi possível enviar a mensagem. Tente novamente!");
       setStatus("error");
+      setTimeout(() => setStatus("idle"), 4000);
     }
   }
 
