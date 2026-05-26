@@ -1,18 +1,10 @@
+import { useContactStore } from "../../shared/stores/useContactStore";
 import React, { useState } from "react";
 import { ScrollReveal } from "../../shared/components/motion/ScrollReveal";
-
-type ContactFormData = {
-  name: string;
-  email: string;
-  message: string;
-};
+import { toast } from "sonner";
 
 export function ContactSection() {
-  const [formData, setFormData] = useState<ContactFormData>({
-    name: "",
-    email: "",
-    message: "",
-  });
+  const { formData, setFormData, resetForm } = useContactStore();
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">(
     "idle",
   );
@@ -21,7 +13,7 @@ export function ContactSection() {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormData({ [name]: value });
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -37,15 +29,22 @@ export function ContactSection() {
           body: JSON.stringify(formData),
         },
       );
+
+      const data = await response.json();
+
       if (!response.ok) {
-        const data = await response.json();
-        alert(data.message);
+        toast.error(data.message || "Erro ao enviar mensagem");
         setStatus("idle");
         return;
       }
+      toast.success("Mensagem enviada com sucesso!");
+      resetForm();
       setStatus("sent");
+      setTimeout(() => setStatus("idle"), 3000);
     } catch {
+      toast.error("Não foi possível enviar a mensagem. Tente novamente!");
       setStatus("error");
+      setTimeout(() => setStatus("idle"), 4000);
     }
   }
 
