@@ -18,7 +18,7 @@ export function HeroBackground({ scrollYProgress }: HeroBackgroundProps) {
       {/* 1. Grid digital sutil */}
       <m.div
         style={{ y: shouldReduceMotion ? 0 : gridY }}
-        className="absolute inset-0 bg-[linear-gradient(to_right,var(--border-subtle)_1px,transparent_1px),linear-gradient(to_bottom,var(--border-subtle)_1px,transparent_1px)] bg-[size:4rem_4rem] opacity-25"
+        className="absolute inset-0 bg-[linear-gradient(to_right,var(--border-subtle)_1px,transparent_1px),linear-gradient(to_bottom,var(--border-subtle)_1px,transparent_1px)] bg-size-[4rem_4rem] opacity-25"
       />
 
       {/* 2. Glow radial de cor Cyan no canto superior esquerdo */}

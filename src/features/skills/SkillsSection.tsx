@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { ScrollReveal } from "../../shared/components/motion/ScrollReveal";
 
 type Skill = {
@@ -74,6 +75,9 @@ export function SkillsSection() {
 }
 
 function SkillCategoryCard({ category }: { category: SkillCategory }) {
+  const [showAll, setShowAll] = useState(false);
+  const visibleSkills = showAll ? category.skills : category.skills.slice(0, 3);
+  const hasMore = category.skills.length > 3;
   return (
     <div
       className="
@@ -88,10 +92,25 @@ function SkillCategoryCard({ category }: { category: SkillCategory }) {
       </h3>
       <p className="text-xs text-(--text-muted) mb-6">{category.description}</p>
       <div className="grid grid-cols-3 gap-4">
-        {category.skills.map((skill) => (
+        {visibleSkills.map((skill) => (
           <SkillItem key={skill.name} skill={skill} />
         ))}
+
+        {!showAll &&
+          category.skills.slice(3).map((skill) => (
+            <div key={skill.name} className="hidden md:block">
+              <SkillItem skill={skill} />
+            </div>
+          ))}
       </div>
+      {hasMore && (
+        <button
+          onClick={() => setShowAll((prev) => !prev)}
+          className="md:hidden mt-4 text-xs font-display uppercase tracking-widest text-(--accent-cyan) hover:opacity-70 transition-opacity duration-200"
+        >
+          {showAll ? "Ver menos ↑" : `+${category.skills.length - 3} mais ↓`}
+        </button>
+      )}
     </div>
   );
 }

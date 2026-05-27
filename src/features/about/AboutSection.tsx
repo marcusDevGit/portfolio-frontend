@@ -1,7 +1,9 @@
+import { useState } from "react";
 import { PROJECTS } from "../projects/projects.data";
 import { ScrollReveal } from "../../shared/components/motion/ScrollReveal";
 
 export function AboutSection() {
+  const [isExpanded, setIsExpanded] = useState(false);
   return (
     <section id="about" className="relative z-10 py-24 px-4">
       <ScrollReveal>
@@ -71,41 +73,52 @@ export function AboutSection() {
                   experiência com desenvolvimento de interfaces responsivas,
                   APIs REST e integração entre frontend e backend.
                 </p>
-                <p>
-                  Além da área de tecnologia, minha trajetória profissional
-                  desenvolveu habilidades importantes como{" "}
-                  <strong className="text-(--text-primary) font-medium">
-                    trabalho em equipe, suporte técnico, comunicação.
-                  </strong>
-                </p>
-                <p>
-                  Atualmente busco oportunidades para crescer como desenvolvedor
-                  e contribuir com projetos reais no mercado de tecnologia.
-                </p>
+                <div
+                  className={`space-y-4 ${isExpanded ? "block" : "hidden"} md:block`}
+                >
+                  <p>
+                    Além da área de tecnologia, minha trajetória profissional
+                    desenvolveu habilidades importantes como{" "}
+                    <strong className="text-(--text-primary) font-medium">
+                      trabalho em equipe, suporte técnico, comunicação.
+                    </strong>
+                  </p>
+                  <p>
+                    Atualmente busco oportunidades para crescer como
+                    desenvolvedor e contribuir com projetos reais no mercado de
+                    tecnologia.
+                  </p>
+                </div>
               </div>
+              <button
+                onClick={() => setIsExpanded((prev) => !prev)}
+                className="md:hidden mt-4 text-xs font-display uppercase tracking-widest text-(--accent-cyan) hover:opacity-70 transition-opacity duration-200"
+              >
+                {isExpanded ? "Ver menos ↑" : "Ver mais ↓"}
+              </button>
 
-              <div className="grid grid-cols-3 gap-4 mt-8 pt-8 border-t border-(--border-subtle)">
+              <div className="grid grid-cols-3 gap-2 md:gap-4 mt-8 pt-8 border-t border-(--border-subtle)">
                 <div className="text-center">
-                  <p className="font-display font-bold text-2xl text-(--accent-cyan)">
+                  <p className="font-display font-bold text-lg md:text-2xl text-(--accent-cyan)">
                     {PROJECTS.length}
                   </p>
-                  <p className="text-xs font-display uppercase tracking-widest text-(--text-muted) mt-1">
+                  <p className="text-[10px] md:text-xs font-display uppercase tracking-normal md:tracking-widest text-(--text-muted) mt-1">
                     Projetos realizados
                   </p>
                 </div>
                 <div className="text-center">
-                  <p className="font-display font-bold text-2xl text-(--accent-cyan)">
+                  <p className="font-display font-bold text-lg md:text-2xl text-(--accent-cyan)">
                     Full Stack
                   </p>
-                  <p className="text-xs font-display uppercase tracking-widest text-(--text-muted) mt-1">
+                  <p className="text-[10px] md:text-xs font-display uppercase tracking-normal md:tracking-widest text-(--text-muted) mt-1">
                     Perfil técnico
                   </p>
                 </div>
                 <div className="text-center">
-                  <p className="font-display font-bold text-2xl text-(--accent-cyan)">
+                  <p className="font-display font-bold text-lg md:text-2xl text-(--accent-cyan)">
                     100%
                   </p>
-                  <p className="text-xs font-display uppercase tracking-widest text-(--text-muted) mt-1">
+                  <p className="text-[10px] md:text-xs font-display uppercase tracking-normal md:tracking-widest text-(--text-muted) mt-1">
                     Foco
                   </p>
                 </div>

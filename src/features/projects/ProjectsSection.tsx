@@ -100,6 +100,7 @@ function ProjectCard({
   onSelect: () => void;
 }) {
   const setHovering = useCursorStore((state) => state.setHovering);
+  const [isStackVisible, setIsStackVisible] = useState(false);
   return (
     <article
       className="
@@ -122,7 +123,9 @@ function ProjectCard({
       <p className="font-body text-sm text-(--text-secondary) leading-relaxed mb-4 flex-1">
         {project.description}
       </p>
-      <div className="flex flex-wrap gap-2 mb-6">
+      <div
+        className={`flex flex-wrap gap-2 mb-3 ${isStackVisible ? "flex" : "hidden"} md:flex`}
+      >
         {project.techStack.map((tech) => (
           <span
             key={tech}
@@ -132,6 +135,12 @@ function ProjectCard({
           </span>
         ))}
       </div>
+      <button
+        onClick={() => setIsStackVisible((prev) => !prev)}
+        className="md:hidden mb-4 text-[10px] font-display uppercase tracking-widest text-(--text-muted) hover:text-(--accent-cyan) transition-colors duration-200 text-left"
+      >
+        {isStackVisible ? "Ocultar stack ↑" : "Ver stack ↓"}
+      </button>
 
       <div className="flex items-center gap-4">
         {project.githubUrl && (

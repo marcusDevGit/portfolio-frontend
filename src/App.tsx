@@ -17,14 +17,20 @@ import { useEasterEggStore } from "./shared/stores/useEasterEggStore";
 import { useKonamiCode } from "./shared/hooks/useKonamiCode";
 import { MatrixRain } from "./shared/components/easter-egg/MatrixRain";
 import { Footer } from "./shared/components/ui/Footer";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 function App() {
   const theme = useThemeStore((state) => state.theme);
   const toggleTerminal = useTerminalStore((state) => state.toggle);
   const toggleMatrix = useEasterEggStore((state) => state.toggleMatrix);
   const isMatrixActive = useEasterEggStore((state) => state.isMatrixActive);
-  const isFirstRender = useRef(true);
+  const [isTouch] = useState(
+    () =>
+      window.matchMedia("(pointer: coarse)").matches ||
+      "ontouchstart" in window ||
+      navigator.maxTouchPoints > 0,
+  );
+  const prevIsMatrixActiveRef = useRef(isMatrixActive);
 
   // Ativa a chuva digital (Matrix) ao digitar o Konami Code
   useKonamiCode(toggleMatrix);
@@ -53,29 +59,36 @@ function App() {
   }, [theme]);
 
   useEffect(() => {
-    if (isFirstRender.current) {
-      isFirstRender.current = false;
-      return;
-    }
+    const prev = prevIsMatrixActiveRef.current;
+    prevIsMatrixActiveRef.current = isMatrixActive;
+
+    if (prev === isMatrixActive) return;
 
     if (isMatrixActive) {
-      toast.success("Modo Hacker Ativado! 🕶️ (Pressione ESC para sair)", {
-        id: "matrix-toast",
-        duration: 5000,
-      });
+      toast.success(
+        isTouch
+          ? "Modo Hacker Ativado! 🕶️"
+          : "Modo Hacker Ativado! 🕶️ (Pressione ESC para sair)",
+        {
+          id: "matrix-toast",
+          duration: 4000,
+        },
+      );
     } else {
       toast.info("Modo Hacker Desativado. Volte sempre!", {
         id: "matrix-toast",
         duration: 3000,
       });
     }
-  }, [isMatrixActive]);
+  }, [isMatrixActive, isTouch]);
 
   return (
     <LazyMotion features={domAnimation} strict>
       <SEO />
       <Toaster theme={theme} position="top-right" />
-      <div className="aurora-bg min-h-screen cursor-none">
+      <div
+        className={`aurora-bg min-h-screen ${!isTouch ? "cursor-none" : ""}`}
+      >
         <CustomCursor />
         <MatrixRain />
         <CommandPalette />

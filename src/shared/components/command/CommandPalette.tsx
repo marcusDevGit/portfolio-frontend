@@ -47,6 +47,24 @@ export function CommandPalette() {
     close();
   };
   return (
+    <>
+    <button
+      onClick={toggle}
+      className="
+        md:hidden
+        fixed bottom-6 right-6 z-50
+        flex items-center gap-2
+        px-4 py-3 rounded-full
+        bg-(--accent-cyan) text-black
+        shadow-lg hover:shadow-(--glow-cyan)
+        font-display font-semibold text-sm
+        transition-all duration-300
+        cursor-pointer
+      "
+      aria-label="Abrir Command Palette"
+    >
+      <span>⌘ K</span>
+    </button>
     <AnimatePresence>
       {isOpen && (
         <div className="fixed inset-0 z-100 flex items-start justify-center pt-[15vh] px-4">
@@ -88,7 +106,7 @@ export function CommandPalette() {
                 >
                   <Command.Item
                     onSelect={() =>
-                      runCommand(() => (window.location.hash = "#about"))
+                      runCommand(() => (window.location.hash = "#projects"))
                     }
                     className="flex items-center gap-3 px-3 py-3 mt-2 text-sm text-(--text-secondary) rounded-lg cursor-pointer data-[selected=true]:bg-(--border-subtle) data-[selected=true]:text-(--text-primary) transition-colors"
                   >
@@ -214,5 +232,6 @@ export function CommandPalette() {
         </div>
       )}
     </AnimatePresence>
+    </>
   );
 }
