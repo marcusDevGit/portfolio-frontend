@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { m, AnimatePresence } from "framer-motion";
 import { useTerminalStore } from "../../shared/stores/useTerminalStore";
+import { useAuthStore } from "../../shared/stores/useAuthStore";
 import { X, Terminal as TerminalIcon } from "lucide-react";
 import { PROJECTS } from "../projects/projects.data";
 
@@ -8,6 +9,8 @@ export function TerminalSection() {
   const { isOpen, close, history, setHistory, clearHistory } =
     useTerminalStore();
   const [inputVal, setInputVal] = useState("");
+
+  const openLoginModal = useAuthStore((state) => state.openLoginModal);
 
   const inputRef = useRef<HTMLInputElement>(null);
   const historyEndRef = useRef<HTMLDivElement>(null);
@@ -176,6 +179,17 @@ LinkedIn: https://linkedin.com/in/marcusphellypp`;
       case "exit":
         setTimeout(() => close(), 500);
         return "Fechando terminal...  Bye!";
+      case "login":
+        openLoginModal();
+        return "Iniciando sessão de autenticação... Insira suas credenciais";
+
+      case "sudo":
+        if (args[0] === "login" && args[1] === "admin") {
+          openLoginModal();
+          return "Modo Administrador solicitado. Insira suas credenciais no painel";
+        }
+        return "Error: privilégios de superusuário negados.";
+
       default:
         return `Comando não reconhecido: '${mainCommand}'. Digite 'help' para ver a lista de comandos.`;
     }

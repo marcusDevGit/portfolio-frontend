@@ -16,10 +16,15 @@ import { useTerminalStore } from "./shared/stores/useTerminalStore";
 import { useEasterEggStore } from "./shared/stores/useEasterEggStore";
 import { useKonamiCode } from "./shared/hooks/useKonamiCode";
 import { MatrixRain } from "./shared/components/easter-egg/MatrixRain";
+import { useAuthStore } from "./shared/stores/useAuthStore";
+import { LoginModal } from "./shared/components/admin/LoginModal";
+import { AdminDashboard } from "./shared/components/admin/AdminDashboard";
+
 import { Footer } from "./shared/components/ui/Footer";
 import { useEffect, useRef, useState } from "react";
 
 function App() {
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const theme = useThemeStore((state) => state.theme);
   const toggleTerminal = useTerminalStore((state) => state.toggle);
   const toggleMatrix = useEasterEggStore((state) => state.toggleMatrix);
@@ -93,6 +98,8 @@ function App() {
         <MatrixRain />
         <CommandPalette />
         <TerminalSection />
+        <LoginModal />
+        {isAuthenticated && <AdminDashboard />}
         <Navbar />
 
         <main className="relative z-10 pt-32 text-center">
