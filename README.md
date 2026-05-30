@@ -1,5 +1,7 @@
 # 🎨 Meu Portfólio Premium - Frontend
 
+![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB) ![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white) ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white) ![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white) ![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white) ![Vercel](https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)
+
 Este é o repositório público do Frontend do meu portfólio pessoal (Versão 2). Ele foi desenhado com um foco gigantesco em **UX/UI avançada**, **Performance Absoluta**, **Acessibilidade** e um **CMS Administrativo integrado**.
 
 ## 🛠️ Tecnologias Utilizadas
