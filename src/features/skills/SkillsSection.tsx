@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ScrollReveal } from "../../shared/components/motion/ScrollReveal";
 
 type Skill = {
@@ -47,6 +47,21 @@ const SKILL_CATEGORIES: SkillCategory[] = [
 ];
 
 export function SkillsSection() {
+  const [activeStacks, setActiveStack] = useState<string[]>([]);
+  const api_url = import.meta.env.VITE_API_URL;
+
+  useEffect(() => {
+    fetch(`${api_url}/api/profile`)
+      .then((res) => {
+        if (!res.ok) throw new Error();
+        return res.json();
+      })
+      .then((data) => {
+        setActiveStack(data.stacks || []);
+      })
+      .catch((err) => console.error("Erro ao carregar stacks dinâmicas", err));
+  }, [api_url]);
+
   return (
     <section id="skills" className="relative z-10 py-24  px-4">
       <ScrollReveal>
@@ -68,6 +83,27 @@ export function SkillsSection() {
               <SkillCategoryCard key={category.title} category={category} />
             ))}
           </div>
+          {activeStacks.length > 0 && (
+            <div className="mt-16 pt-8 border-t border-(--border-subtle) text-center">
+              <span className="text-xs font-display uppercase tracking-widest text-(--text-muted) mb-4 block">
+                Outras Tecnologias & Stacks Ativas
+              </span>
+              <div className="flex flex-wrap justify-center gap-2 max-w-2xl mx-auto">
+                {activeStacks.map((stack) => (
+                  <span
+                    key={stack}
+                    className="
+                      px-3 py-1.5 rounded-lg bg-neutral-900/60 border border-neutral-900 
+                      text-xs font-mono text-neutral-300 hover:border-(--accent-cyan)/30 
+                      hover:text-white transition-all select-none
+                    "
+                  >
+                    {stack}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </ScrollReveal>
     </section>

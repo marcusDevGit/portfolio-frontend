@@ -9,6 +9,23 @@ export function ContactSection() {
     "idle",
   );
 
+  const [whatsapp, setWhatsapp] = useState<string | null>(null);
+  const api_url = import.meta.env.VITE_API_URL;
+  // Busca as informações do WhatsApp cadastrado
+  React.useEffect(() => {
+    fetch(`${api_url}/api/profile`)
+      .then((res) => {
+        if (!res.ok) throw new Error();
+        return res.json();
+      })
+      .then((data) => {
+        setWhatsapp(data.whatsapp || null);
+      })
+      .catch((err) => {
+        console.error("Erro ao buscar WhatsApp para contato rápido:", err);
+      });
+  }, [api_url]);
+
   function handleChange(
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) {
@@ -63,6 +80,22 @@ export function ContactSection() {
               Aberto a oportunidades, freelas e colaborações. Me manda uma
               mensagem.
             </p>
+            {whatsapp && (
+              <div className="mt-4 flex justify-center">
+                <a
+                  href={`https://wa.me/${whatsapp.replace(/\D/g, "")}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="
+                    inline-flex items-center gap-2 px-4 py-2 rounded-full border border-(--accent-cyan)/20 
+                    bg-(--accent-cyan)/5 hover:bg-(--accent-cyan)/10 text-xs font-display uppercase tracking-widest 
+                    text-(--accent-cyan) hover:shadow-[0_0_15px_rgba(0,209,255,0.2)] transition-all duration-300
+                  "
+                >
+                  💬 Conversar direto no WhatsApp
+                </a>
+              </div>
+            )}
           </div>
 
           <form
