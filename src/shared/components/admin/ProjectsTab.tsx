@@ -187,6 +187,7 @@ export function ProjectsTab() {
 
       {/* Modal do Formulário (Pai controla abertura e qual projeto será editado) */}
       <ProjectFormModal
+        key={selectedProject?.id || "new"}
         isOpen={isFormOpen}
         project={selectedProject}
         onClose={() => setIsFormOpen(false)}
