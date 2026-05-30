@@ -8,6 +8,9 @@ import {
   Plus,
   X,
   BarChart3,
+  Key,
+  Eye,
+  EyeOff,
 } from "lucide-react";
 import { toast } from "sonner";
 import { useAuthStore } from "../../stores/useAuthStore";
@@ -39,6 +42,14 @@ export function ProfileTab() {
   const [photoName, setPhotoName] = useState("Nenhuma foto selecionada");
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [cvName, setCvName] = useState("Nenhum arquivo selecionado");
+
+  // Estados para alteração de senha
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [updatingPassword, setUpdatingPassword] = useState(false);
+  // Estados de controle para exibir/ocultar senha (máscara)
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
 
   // Estados gerais
   const [loading, setLoading] = useState(false);
@@ -97,6 +108,45 @@ export function ProfileTab() {
     }, 0);
     return () => clearTimeout(timer);
   }, [fetchProfile, fetchStats]);
+
+  async function handleChangePassword(e: React.FormEvent) {
+    e.preventDefault();
+    if (newPassword.length < 6) {
+      toast.warning("A nova senha deve ter no mínimo 6 caracteres!");
+      return;
+    }
+
+    setUpdatingPassword(true);
+    try {
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/auth/change-password`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ currentPassword, newPassword }),
+        },
+      );
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || "Erro ao atualizar a senha.");
+      }
+
+      toast.success("Senha de acesso atualizada com sucesso!");
+      setCurrentPassword("");
+      setNewPassword("");
+    } catch (err) {
+      const message =
+        err instanceof Error ? err.message : "Erro de rede ao atualizar senha.";
+      toast.error(message);
+    } finally {
+      setUpdatingPassword(false);
+    }
+  }
 
   // Adicionar stack localmente
   function handleAddStack(e: React.FormEvent) {
@@ -468,6 +518,81 @@ export function ProfileTab() {
           {loading
             ? "Salvando Configurações..."
             : "Salvar Configurações de Perfil"}
+        </button>
+      </form>
+      {/* Form de alteração de senha  */}
+      <form
+        onSubmit={handleChangePassword}
+        className="mt-8 space-y-6 max-w-2xl bg-neutral-900/10 border border-neutral-900 p-6 rounded-xl"
+      >
+        <div className="flex items-center gap-2 border-b border-neutral-900 pb-3">
+          <Key size={16} className="text-(--accent-cyan)" />
+          <h3 className="text-xs font-display uppercase tracking-widest text-white font-semibold">
+            Segurança & Alteração de Senha
+          </h3>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {/* Campo: Senha Atual */}
+          <div className="flex flex-col gap-1.5">
+            <label className="text-xs font-display uppercase tracking-widest text-neutral-400">
+              Senha Atual
+            </label>
+            <div className="relative">
+              <input
+                type={showCurrentPassword ? "text" : "password"}
+                required
+                value={currentPassword}
+                onChange={(e) => setCurrentPassword(e.target.value)}
+                placeholder="••••••••"
+                className="w-full bg-neutral-950 border border-neutral-800 rounded-lg pl-4 pr-10 py-2.5 text-sm text-white focus:outline-none focus:border-(--accent-cyan)/50"
+              />
+              <button
+                type="button"
+                onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-white transition-colors cursor-pointer"
+                title={showCurrentPassword ? "Ocultar senha" : "Mostrar senha"}
+              >
+                {showCurrentPassword ? <EyeOff size={15} /> : <Eye size={15} />}
+              </button>
+            </div>
+          </div>
+          {/* Campo: Nova Senha */}
+          <div className="flex flex-col gap-1.5">
+            <label className="text-xs font-display uppercase tracking-widest text-neutral-400">
+              Nova Senha
+            </label>
+            <div className="relative">
+              <input
+                type={showNewPassword ? "text" : "password"}
+                required
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                placeholder="Mínimo 6 caracteres"
+                className="w-full bg-neutral-950 border border-neutral-800 rounded-lg pl-4 pr-10 py-2.5 text-sm text-white focus:outline-none focus:border-(--accent-cyan)/50"
+              />
+              <button
+                type="button"
+                onClick={() => setShowNewPassword(!showNewPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-white transition-colors cursor-pointer"
+                title={showNewPassword ? "Ocultar senha" : "Mostrar senha"}
+              >
+                {showNewPassword ? <EyeOff size={15} /> : <Eye size={15} />}
+              </button>
+            </div>
+          </div>
+        </div>
+        <button
+          type="submit"
+          disabled={updatingPassword}
+          className="
+              w-full px-6 py-3 rounded-lg border border-neutral-800 hover:border-(--accent-cyan)/30
+              font-display font-semibold text-xs uppercase tracking-widest text-neutral-300 hover:text-white
+              transition-all duration-300 cursor-pointer disabled:opacity-50 bg-neutral-950/40
+            "
+        >
+          {updatingPassword
+            ? "Atualizando Senha..."
+            : "Atualizar Senha de Acesso"}
         </button>
       </form>
     </div>

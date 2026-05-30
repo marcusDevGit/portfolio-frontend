@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { ScrollReveal } from "../../shared/components/motion/ScrollReveal";
 import { useCursorStore } from "../../shared/stores/useCursorStore";
 import { ProjectCaseStudyModal } from "./ProjectCaseStudy";
-
+import { FolderGit2 } from "lucide-react";
 export type Project = {
   id: string;
   title: string;
@@ -10,6 +10,7 @@ export type Project = {
   techStack: string[];
   githubUrl: string | null;
   demoUrl: string | null;
+  imageUrl?: string;
   featured: boolean;
   order: number;
   problem?: string;
@@ -113,6 +114,26 @@ function ProjectCard({
       onMouseEnter={() => setHovering(true)}
       onMouseLeave={() => setHovering(false)}
     >
+      {/* Banner do Projeto */}
+      {project.imageUrl ? (
+        <div className="relative w-full aspect-video overflow-hidden rounded-xl mb-4 border border-(--border-subtle) bg-neutral-950">
+          <img
+            src={project.imageUrl}
+            alt={project.title}
+            loading="lazy"
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          />
+          <div className="absolute inset-0 bg-linear-to-t from-neutral-950/80 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity duration-300" />
+        </div>
+      ) : (
+        <div className="relative w-full aspect-video overflow-hidden rounded-xl mb-4 border border-(--border-subtle) bg-neutral-900/10 flex items-center justify-center">
+          <FolderGit2
+            size={32}
+            className="text-neutral-700 group-hover:text-(--accent-cyan)/50 transition-colors duration-300"
+          />
+        </div>
+      )}
+
       {project.featured && (
         <div className="absolute inset-0 rounded-2xl bg-linear-to-br from-(--accent-cyan)/5 to-transparent pointer-events-none" />
       )}
