@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { useAuthStore } from "../../stores/useAuthStore";
 import { X, Info, Globe, FolderGit2 } from "lucide-react";
 import { toast } from "sonner";
+import { supabase } from "../../utils/supabase";
 import type { Project } from "../../../features/projects/ProjectsSection";
 
 interface ProjectFormModalProps {
@@ -48,7 +49,28 @@ export function ProjectFormModal({
   );
   const [impact, setImpact] = useState(project ? project.impact || "" : "");
 
+  const [imageUrl, setImageUrl] = useState(
+    project ? project.imageUrl || "" : "",
+  );
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(
+    project?.imageUrl || null,
+  );
+
   if (!isOpen) return null;
+
+  function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (file) {
+      setImageFile(file);
+      setImagePreview(URL.createObjectURL(file));
+    }
+  }
+  function handleRemoveImage() {
+    setImageFile(null);
+    setImagePreview(null);
+    setImageUrl("");
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -58,31 +80,51 @@ export function ProjectFormModal({
     }
 
     setIsLoading(true);
-    const payload = {
-      title,
-      description,
-      techStack: techStack
-        .split(",")
-        .map((s) => s.trim())
-        .filter(Boolean),
-      githubUrl: githubUrl || null,
-      demoUrl: demoUrl || null,
-      featured,
-      order: Number(order),
-      problem: problem || null,
-      solution: solution || null,
-      technicalDecisions: technicalDecisions || null,
-      challenges: challenges || null,
-      impact: impact || null,
-    };
-
-    const isEdit = !!project;
-    const url = isEdit
-      ? `${import.meta.env.VITE_API_URL}/api/projects/${project.id}`
-      : `${import.meta.env.VITE_API_URL}/api/projects`;
-    const method = isEdit ? "PUT" : "POST";
-
     try {
+      let finalImageUrl = imageUrl;
+
+      if (imageFile) {
+        const fileExt = imageFile.name.split(".").pop();
+        const fileName = `project/${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
+
+        const { error } = await supabase.storage
+          .from("portfolio")
+          .upload(fileName, imageFile);
+
+        if (error) throw new Error("Erro ao fazer upload da imagem do projeto");
+
+        const { data: publicUrlData } = supabase.storage
+          .from("portfolio")
+          .getPublicUrl(fileName);
+
+        finalImageUrl = publicUrlData.publicUrl;
+      }
+
+      const payload = {
+        title,
+        description,
+        techStack: techStack
+          .split(",")
+          .map((s) => s.trim())
+          .filter(Boolean),
+        githubUrl: githubUrl || null,
+        demoUrl: demoUrl || null,
+        imageUrl: finalImageUrl || null,
+        featured,
+        order: Number(order),
+        problem: problem || null,
+        solution: solution || null,
+        technicalDecisions: technicalDecisions || null,
+        challenges: challenges || null,
+        impact: impact || null,
+      };
+
+      const isEdit = !!project;
+      const url = isEdit
+        ? `${import.meta.env.VITE_API_URL}/api/projects/${project.id}`
+        : `${import.meta.env.VITE_API_URL}/api/projects`;
+      const method = isEdit ? "PUT" : "POST";
+
       const res = await fetch(url, {
         method,
         headers: {
@@ -92,9 +134,10 @@ export function ProjectFormModal({
         body: JSON.stringify(payload),
       });
 
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Erro ao salvar projeto.");
-
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.message || "Erro ao salvar projeto.");
+      }
       toast.success(
         isEdit ? "Projeto atualizado!" : "Projeto criado com sucesso!",
       );
@@ -139,6 +182,57 @@ export function ProjectFormModal({
           <p className="text-xs text-neutral-500 mt-1">
             Preencha os campos abaixo para salvar o projeto.
           </p>
+        </div>
+        {/* Upload do Banner do Projeto */}
+        <div className="flex flex-col gap-2 p-4 rounded-xl border border-neutral-900 bg-neutral-950/40">
+          <label className="text-xs font-display uppercase tracking-widest text-neutral-400 font-semibold">
+            Banner / Captura de Tela do Projeto
+          </label>
+
+          <div className="flex flex-col sm:flex-row items-center gap-4">
+            {imagePreview ? (
+              <div className="relative w-full sm:w-48 aspect-video rounded-lg overflow-hidden border border-neutral-800 bg-neutral-950 flex items-center justify-center">
+                <img
+                  src={imagePreview}
+                  alt="Preview do projeto"
+                  className="w-full h-full object-cover"
+                />
+                <button
+                  type="button"
+                  onClick={handleRemoveImage}
+                  className="absolute top-2 right-2 p-1 rounded-md bg-red-950/80 border border-red-800 text-red-400 hover:text-white hover:bg-red-900 transition-colors cursor-pointer"
+                  title="Remover imagem"
+                >
+                  <X size={12} />
+                </button>
+              </div>
+            ) : (
+              <div className="w-full sm:w-48 aspect-video rounded-lg border border-dashed border-neutral-800 bg-neutral-950/50 flex flex-col items-center justify-center text-neutral-600">
+                <FolderGit2 size={24} />
+                <span className="text-[10px] uppercase tracking-wider mt-1 font-mono">
+                  Sem Banner
+                </span>
+              </div>
+            )}
+
+            <div className="flex-1 flex flex-col gap-1.5 w-full">
+              <input
+                type="file"
+                accept="image/*"
+                disabled={isLoading}
+                onChange={handleImageChange}
+                className="
+                  text-xs text-neutral-400 file:mr-4 file:py-2 file:px-4
+                  file:rounded-lg file:border-0 file:text-xs file:font-semibold
+                  file:bg-neutral-900 file:text-neutral-300 hover:file:bg-neutral-800
+                  file:cursor-pointer cursor-pointer w-full
+                "
+              />
+              <p className="text-[10px] text-neutral-500">
+                Recomendado: Proporção 16:9 (ex: 1280x720). Tamanho máx: 5MB.
+              </p>
+            </div>
+          </div>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">

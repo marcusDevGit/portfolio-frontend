@@ -1,9 +1,32 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { PROJECTS } from "../projects/projects.data";
 import { ScrollReveal } from "../../shared/components/motion/ScrollReveal";
 
+interface ProfileData {
+  bio: string;
+  avatarUrl: string;
+}
+
 export function AboutSection() {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [profile, setProfile] = useState<ProfileData | null>(null);
+
+  const api_url = import.meta.env.VITE_API_URL;
+
+  useEffect(() => {
+    fetch(`${api_url}/api/profile`)
+      .then((res) => {
+        if (!res.ok) throw new Error("Erro na resposta do servidor.");
+        return res.json();
+      })
+      .then((data) => {
+        setProfile(data);
+      })
+      .catch((err) => {
+        console.error("Erro ao buscar dados do perfil público:", err);
+      });
+  }, [api_url]);
+
   return (
     <section id="about" className="relative z-10 py-24 px-4">
       <ScrollReveal>
@@ -23,7 +46,7 @@ export function AboutSection() {
               <div className="relative w-56 h-56 md:w-64 md:h-64">
                 <div className="absolute inset-0 rounded-full bg-linear-to-br from-(--accent-cyan)/30 to-(--accent-soft)/20 blur-xl" />
                 <img
-                  src="/images/perfil-port.png"
+                  src={profile?.avatarUrl || "/images/perfil-port.png"}
                   alt="Marcus Phellypp — Desenvolvedor Full Stack"
                   loading="lazy"
                   decoding="async"
@@ -63,16 +86,20 @@ export function AboutSection() {
           "
             >
               <div className="space-y-4 font-body text-base text-(--text-secondary) leading-relaxed">
-                <p>
-                  Desenvolvedor{" "}
-                  <strong className="text-(--text-primary) font-medium">
-                    Full Stack
-                  </strong>{" "}
-                  em formação, com foco em aplicações modernas utilizando
-                  React.js, Node.js, PostgreSQL e JavaScript. Adiquirindo
-                  experiência com desenvolvimento de interfaces responsivas,
-                  APIs REST e integração entre frontend e backend.
-                </p>
+                {profile?.bio ? (
+                  <p className="whitespace-pre-line">{profile.bio}</p>
+                ) : (
+                  <p>
+                    Desenvolvedor{" "}
+                    <strong className="text-(--text-primary) font-medium">
+                      Full Stack
+                    </strong>{" "}
+                    em formação, com foco em aplicações modernas utilizando
+                    React.js, Node.js, PostgreSQL e JavaScript. Adiquirindo
+                    experiência com desenvolvimento de interfaces responsivas,
+                    APIs REST e integração entre frontend e backend.
+                  </p>
+                )}
                 <div
                   className={`space-y-4 ${isExpanded ? "block" : "hidden"} md:block`}
                 >
