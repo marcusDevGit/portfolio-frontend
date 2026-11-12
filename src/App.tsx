@@ -109,8 +109,18 @@ function App() {
         <TerminalSection />
         <Suspense fallback={null}>
           <LoginModal />
-          {isAuthenticated && <AdminDashboard />}
         </Suspense>
+        {isAuthenticated && (
+          <Suspense
+            fallback={
+              <div className="fixed inset-0 z-110 flex items-center justify-center bg-neutral-950/95 text-neutral-300 text-sm font-display uppercase tracking-widest">
+                Carregando painel...
+              </div>
+            }
+          >
+            <AdminDashboard />
+          </Suspense>
+        )}
         <Navbar />
 
         <main className="relative z-10 pt-32 text-center">
