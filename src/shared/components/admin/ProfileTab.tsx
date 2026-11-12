@@ -1,5 +1,5 @@
 // Local: frontend/src/shared/components/admin/ProfileTab.tsx
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import {
   AlertTriangle,
   Phone,
@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { useAuthStore } from "../../stores/useAuthStore";
+import { useProfileStore } from "../../stores/useProfileStore";
 import { supabase } from "../../utils/supabase";
 
 interface StatsData {
@@ -41,7 +42,16 @@ export function ProfileTab() {
   // Exibição visual do nome do arquivo
   const [photoName, setPhotoName] = useState("Nenhuma foto selecionada");
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+  const photoBlobUrlRef = useRef<string | null>(null);
   const [cvName, setCvName] = useState("Nenhum arquivo selecionado");
+
+  useEffect(() => {
+    return () => {
+      if (photoBlobUrlRef.current) {
+        URL.revokeObjectURL(photoBlobUrlRef.current);
+      }
+    };
+  }, []);
 
   // Estados para alteração de senha
   const [currentPassword, setCurrentPassword] = useState("");
@@ -172,9 +182,14 @@ export function ProfileTab() {
   function handlePhotoSelection(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (file) {
+      if (photoBlobUrlRef.current) {
+        URL.revokeObjectURL(photoBlobUrlRef.current);
+      }
+      const nextUrl = URL.createObjectURL(file);
+      photoBlobUrlRef.current = nextUrl;
       setAvatarFile(file);
       setPhotoName(file.name);
-      setPhotoPreview(URL.createObjectURL(file));
+      setPhotoPreview(nextUrl);
       toast.info(`Foto selecionada: ${file.name}`);
     }
   }
@@ -262,6 +277,11 @@ export function ProfileTab() {
 
       toast.success("Configurações do perfil salvas com sucesso!");
       fetchProfile(); // Recarrega dados limpos
+      useProfileStore.getState().fetchProfile(true);
+      if (photoBlobUrlRef.current) {
+        URL.revokeObjectURL(photoBlobUrlRef.current);
+        photoBlobUrlRef.current = null;
+      }
       setAvatarFile(null);
       setCvFile(null);
     } catch (err) {

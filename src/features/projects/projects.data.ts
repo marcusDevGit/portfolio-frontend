@@ -6,13 +6,13 @@
 // Um dado só existe em UM lugar. Se mudar aqui, muda em todo o app.
 
 export type Project = {
-  title: string
-  description: string
-  stack: string[]
-  github?: string
-  demo?: string
-  highlight?: boolean
-}
+  title: string;
+  description: string;
+  stack: string[];
+  github?: string;
+  demo?: string;
+  highlight?: boolean;
+};
 
 export const PROJECTS: Project[] = [
   {
@@ -58,4 +58,21 @@ export const PROJECTS: Project[] = [
     github: "https://github.com/marcusDevGit/todo-app-full.git",
     highlight: true,
   },
-]
+  {
+    title: "BibleQuest Platform",
+    description:
+      "Plataforma completa de quiz bíblico em monorepo Turborepo, com app mobile (Expo), painel administrativo web, partidas multiplayer 1v1 em tempo real via Socket.IO, rankings e sistema de conquistas.",
+    stack: [
+      "TypeScript",
+      "React",
+      "React Native",
+      "Node.js",
+      "Prisma",
+      "Socket.IO",
+      "Turborepo",
+      "Docker",
+    ],
+    // demo: "https://bible-quiz-admin.vercel.app",
+    highlight: true,
+  },
+];

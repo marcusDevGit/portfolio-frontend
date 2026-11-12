@@ -1,4 +1,5 @@
 import { useContactStore } from "../../shared/stores/useContactStore";
+import { useProfileStore } from "../../shared/stores/useProfileStore";
 import React, { useState } from "react";
 import { ScrollReveal } from "../../shared/components/motion/ScrollReveal";
 import { toast } from "sonner";
@@ -9,22 +10,13 @@ export function ContactSection() {
     "idle",
   );
 
-  const [whatsapp, setWhatsapp] = useState<string | null>(null);
-  const api_url = import.meta.env.VITE_API_URL;
+  const whatsapp = useProfileStore((state) => state.profile?.whatsapp || null);
+  const fetchProfile = useProfileStore((state) => state.fetchProfile);
+
   // Busca as informações do WhatsApp cadastrado
   React.useEffect(() => {
-    fetch(`${api_url}/api/profile`)
-      .then((res) => {
-        if (!res.ok) throw new Error();
-        return res.json();
-      })
-      .then((data) => {
-        setWhatsapp(data.whatsapp || null);
-      })
-      .catch((err) => {
-        console.error("Erro ao buscar WhatsApp para contato rápido:", err);
-      });
-  }, [api_url]);
+    fetchProfile();
+  }, [fetchProfile]);
 
   function handleChange(
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,

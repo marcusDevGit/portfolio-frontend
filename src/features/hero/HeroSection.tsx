@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { m, useScroll, useTransform } from "framer-motion";
+import { m, useScroll, useTransform, useReducedMotion } from "framer-motion";
 import anime from "animejs";
 import { HeroBackground } from "./HeroBackground";
 
@@ -15,6 +15,7 @@ export function HeroSection() {
   const scrrollRef = useRef<HTMLDivElement>(null);
 
   const sectionRef = useRef<HTMLElement>(null);
+  const shouldReduceMotion = useReducedMotion();
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -25,6 +26,16 @@ export function HeroSection() {
   const subtitleY = useTransform(scrollYProgress, [0, 1], ["0px", "-30px"]);
 
   useEffect(() => {
+    if (shouldReduceMotion) {
+      anime.set(
+        [badgeref.current, subtitleRef.current, ctasRef.current, scrrollRef.current],
+        { opacity: 1, translateY: 0 },
+      );
+      anime.set(".hero-letter", { opacity: 1, translateY: 0 });
+      anime.set(".hero-name", { opacity: 1, clipPath: "inset(0 0% 0 0)" });
+      return;
+    }
+
     let typingLoop: ReturnType<typeof anime.timeline> | null = null;
 
     const startTypingLoop = () => {
@@ -138,7 +149,7 @@ export function HeroSection() {
       entrance.pause();
       if (typingLoop) typingLoop.pause();
     };
-  }, []);
+  }, [shouldReduceMotion]);
 
   return (
     <section

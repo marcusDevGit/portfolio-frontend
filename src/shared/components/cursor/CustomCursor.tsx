@@ -12,7 +12,7 @@ export function CustomCursor() {
   const springY = useSpring(mouseY, { stiffness: 300, damping: 28 });
 
   useEffect(() => {
-    if (window.matchMedia("(pointer: coarse").matches) return;
+    if (window.matchMedia("(pointer: coarse)").matches) return;
 
     const handleMouseMove = (event: MouseEvent) => {
       mouseX.set(event.clientX);

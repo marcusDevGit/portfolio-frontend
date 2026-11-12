@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { ScrollReveal } from "../../shared/components/motion/ScrollReveal";
+import { useProfileStore } from "../../shared/stores/useProfileStore";
 
 type Skill = {
   name: string;
@@ -46,21 +47,15 @@ const SKILL_CATEGORIES: SkillCategory[] = [
   },
 ];
 
+const EMPTY_STACKS: string[] = [];
+
 export function SkillsSection() {
-  const [activeStacks, setActiveStack] = useState<string[]>([]);
-  const api_url = import.meta.env.VITE_API_URL;
+  const activeStacks = useProfileStore((state) => state.profile?.stacks ?? EMPTY_STACKS);
+  const fetchProfile = useProfileStore((state) => state.fetchProfile);
 
   useEffect(() => {
-    fetch(`${api_url}/api/profile`)
-      .then((res) => {
-        if (!res.ok) throw new Error();
-        return res.json();
-      })
-      .then((data) => {
-        setActiveStack(data.stacks || []);
-      })
-      .catch((err) => console.error("Erro ao carregar stacks dinâmicas", err));
-  }, [api_url]);
+    fetchProfile();
+  }, [fetchProfile]);
 
   return (
     <section id="skills" className="relative z-10 py-24  px-4">
@@ -74,7 +69,7 @@ export function SkillsSection() {
               Stack técnica
             </h2>
             <p className="font-body text-(--text-secondary) max-w-xl mx-auto">
-              Tecnologia que uso no dia para construir os projetos.
+              Tecnologia que uso no dia a dia para construir os projetos.
             </p>
           </div>
 

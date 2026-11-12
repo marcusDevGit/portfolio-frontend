@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { Command } from "cmdk";
 import { m, AnimatePresence } from "framer-motion";
 import { useCommandStore } from "../../stores/useCommandStore";
@@ -6,6 +6,7 @@ import { useThemeStore } from "../../stores/useThemeStore";
 import { useTerminalStore } from "../../stores/useTerminalStore";
 import { useEasterEggStore } from "../../stores/useEasterEggStore";
 import { useContactStore } from "../../stores/useContactStore";
+import { useProfileStore } from "../../stores/useProfileStore";
 import {
   Briefcase,
   FileText,
@@ -28,22 +29,12 @@ export function CommandPalette() {
   const isMatrixActive = useEasterEggStore((state) => state.isMatrixActive);
   const setFormData = useContactStore((state) => state.setFormData);
 
-  const [cvUrl, setCvUrl] = useState<string | null>(null);
-  const api_url = import.meta.env.VITE_API_URL;
+  const cvUrl = useProfileStore((state) => state.profile?.cvUrl || null);
+  const fetchProfile = useProfileStore((state) => state.fetchProfile);
 
   useEffect(() => {
-    fetch(`${api_url}/api/profile`)
-      .then((res) => {
-        if (!res.ok) throw new Error();
-        return res.json();
-      })
-      .then((data) => {
-        setCvUrl(data.cvUrl || null);
-      })
-      .catch((err) =>
-        console.error("Erro ao buscar currículo para o CommandPalette", err),
-      );
-  }, [api_url]);
+    fetchProfile();
+  }, [fetchProfile]);
 
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
@@ -89,7 +80,7 @@ export function CommandPalette() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="absolute inset-0 bg-black/20 dark:bg-black/50 backdrop-blur-sm"
+              className="absolute inset-0 bg-black/40 backdrop-blur-sm"
             />
 
             <m.div

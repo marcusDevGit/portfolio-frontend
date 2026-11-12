@@ -158,7 +158,7 @@ Currently Learning
 -----------------------
 E-mail:   marcus_psc@hotmail.com
 GitHub:   https://github.com/marcusDevGit
-LinkedIn: https://linkedin.com/in/marcusphellypp`;
+LinkedIn: https://www.linkedin.com/in/marcus25-dev/`;
 
       case "neofetch":
         return `   .---.          visitor@marcus-system
@@ -209,6 +209,9 @@ LinkedIn: https://linkedin.com/in/marcusphellypp`;
           />
           {/* Janela do Terminal */}
           <m.div
+            role="dialog"
+            aria-modal="true"
+            aria-label="Terminal Interativo"
             initial={{ opacity: 0, scale: 0.9, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
@@ -231,6 +234,7 @@ LinkedIn: https://linkedin.com/in/marcusphellypp`;
                 </span>
               </div>
               <button
+                aria-label="Fechar Terminal"
                 onClick={(e) => {
                   e.stopPropagation();
                   close();

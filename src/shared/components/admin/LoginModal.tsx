@@ -91,6 +91,9 @@ export function LoginModal() {
           {/* Card do Formulário */}
           <m.div
             ref={modalRef}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Entrar no CMS"
             initial={{ opacity: 0, scale: 0.95, y: 15 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 15 }}
