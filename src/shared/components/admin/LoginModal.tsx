@@ -19,6 +19,7 @@ export function LoginModal() {
 
   useEffect(() => {
     if (isOpen) {
+      void import("./AdminDashboard");
       setTimeout(() => {
         firstInputRef.current?.focus();
         setEmail("");
@@ -54,13 +55,19 @@ export function LoginModal() {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({ email, password }),
+          signal: AbortSignal.timeout(15000),
         },
       );
 
-      const data = await response.json();
+      const isJson = response.headers
+        .get("content-type")
+        ?.includes("application/json");
+      const data = isJson ? await response.json() : null;
 
       if (!response.ok) {
-        throw new Error(data.message || "E-mail ou senha inválidos.");
+        throw new Error(
+          data?.message || `Erro no servidor (${response.status}).`,
+        );
       }
 
       toast.success("Acesso administrativo concedido!");
@@ -68,7 +75,11 @@ export function LoginModal() {
       closeModal();
     } catch (err) {
       const message =
-        err instanceof Error ? err.message : "Erro de conexão com o servidor.";
+        err instanceof DOMException && err.name === "TimeoutError"
+          ? "O servidor demorou para responder. Tente novamente."
+          : err instanceof Error
+            ? err.message
+            : "Erro de conexão com o servidor.";
       toast.error(message);
     } finally {
       setIsLoading(false);
