@@ -19,6 +19,7 @@ export function ProjectCaseStudyModal({
   const setHovering = useCursorStore((state) => state.setHovering);
 
   useEffect(() => {
+    if (!isOpen) return;
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         onClose();
@@ -53,6 +54,9 @@ export function ProjectCaseStudyModal({
             className="absolute inset-0 bg-black/60 backdrop-blur-sm cursor-pointer"
           />
           <m.div
+            role="dialog"
+            aria-modal="true"
+            aria-label={project.title}
             initial={{ opacity: 0, y: 20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}

@@ -9,7 +9,7 @@ interface ThemeState {
 }
 
 const getSystemTheme = (): Theme => {
-    if (typeof window !== "undefined" && window.matchMedia("(prefers-color-schema: light").matches) {
+    if (typeof window !== "undefined" && window.matchMedia("(prefers-color-scheme: light)").matches) {
         return "light";
     }
     return "dark";

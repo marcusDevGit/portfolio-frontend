@@ -1,5 +1,5 @@
 // src/shared/components/amin/ProjectFormModal.tsx
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useAuthStore } from "../../stores/useAuthStore";
 import { X, Info, Globe, FolderGit2 } from "lucide-react";
 import { toast } from "sonner";
@@ -56,17 +56,35 @@ export function ProjectFormModal({
   const [imagePreview, setImagePreview] = useState<string | null>(
     project?.imageUrl || null,
   );
+  const blobUrlRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (blobUrlRef.current) {
+        URL.revokeObjectURL(blobUrlRef.current);
+      }
+    };
+  }, []);
 
   if (!isOpen) return null;
 
   function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (file) {
+      if (blobUrlRef.current) {
+        URL.revokeObjectURL(blobUrlRef.current);
+      }
+      const nextUrl = URL.createObjectURL(file);
+      blobUrlRef.current = nextUrl;
       setImageFile(file);
-      setImagePreview(URL.createObjectURL(file));
+      setImagePreview(nextUrl);
     }
   }
   function handleRemoveImage() {
+    if (blobUrlRef.current) {
+      URL.revokeObjectURL(blobUrlRef.current);
+      blobUrlRef.current = null;
+    }
     setImageFile(null);
     setImagePreview(null);
     setImageUrl("");
@@ -162,6 +180,9 @@ export function ProjectFormModal({
 
       {/* Janela Modal */}
       <div
+        role="dialog"
+        aria-modal="true"
+        aria-label={project ? "Editar Projeto" : "Novo Projeto"}
         className="
           relative w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-2xl
           bg-neutral-950/90 border border-neutral-800 p-6 md:p-8
@@ -170,6 +191,7 @@ export function ProjectFormModal({
       >
         <button
           onClick={onClose}
+          aria-label="Fechar Modal"
           className="absolute top-4 right-4 p-1.5 rounded-lg text-neutral-400 hover:text-white hover:bg-neutral-800/50 cursor-pointer"
         >
           <X size={18} />

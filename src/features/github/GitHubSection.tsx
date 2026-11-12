@@ -71,7 +71,7 @@ export function GitHubSection() {
                 alt="Calendário de contribuições do GitHub de Marcus"
                 loading="lazy"
                 decoding="async"
-                className="w-full rounded-xl border border-(--border-subtle) opacity-90 max-block-screen"
+                className="w-full max-w-full rounded-xl border border-(--border-subtle) opacity-90"
                 onError={() => setImgError(true)}
               />
             ) : (

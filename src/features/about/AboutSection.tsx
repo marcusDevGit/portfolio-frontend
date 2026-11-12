@@ -1,31 +1,16 @@
 import { useState, useEffect } from "react";
 import { PROJECTS } from "../projects/projects.data";
 import { ScrollReveal } from "../../shared/components/motion/ScrollReveal";
-
-interface ProfileData {
-  bio: string;
-  avatarUrl: string;
-}
+import { useProfileStore } from "../../shared/stores/useProfileStore";
 
 export function AboutSection() {
   const [isExpanded, setIsExpanded] = useState(false);
-  const [profile, setProfile] = useState<ProfileData | null>(null);
-
-  const api_url = import.meta.env.VITE_API_URL;
+  const profile = useProfileStore((state) => state.profile);
+  const fetchProfile = useProfileStore((state) => state.fetchProfile);
 
   useEffect(() => {
-    fetch(`${api_url}/api/profile`)
-      .then((res) => {
-        if (!res.ok) throw new Error("Erro na resposta do servidor.");
-        return res.json();
-      })
-      .then((data) => {
-        setProfile(data);
-      })
-      .catch((err) => {
-        console.error("Erro ao buscar dados do perfil público:", err);
-      });
-  }, [api_url]);
+    fetchProfile();
+  }, [fetchProfile]);
 
   return (
     <section id="about" className="relative z-10 py-24 px-4">
@@ -95,7 +80,7 @@ export function AboutSection() {
                       Full Stack
                     </strong>{" "}
                     em formação, com foco em aplicações modernas utilizando
-                    React.js, Node.js, PostgreSQL e JavaScript. Adiquirindo
+                    React.js, Node.js, PostgreSQL e JavaScript. Adquirindo
                     experiência com desenvolvimento de interfaces responsivas,
                     APIs REST e integração entre frontend e backend.
                   </p>
