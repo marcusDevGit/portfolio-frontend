@@ -15,7 +15,7 @@ import {
 import { toast } from "sonner";
 import { useAuthStore } from "../../stores/useAuthStore";
 import { useProfileStore } from "../../stores/useProfileStore";
-import { supabase } from "../../utils/supabase";
+import { supabase, removeStorageFilesByUrls } from "../../utils/supabase";
 import { optimizeImageBeforeUpload } from "../../utils/optimizeImage";
 
 interface StatsData {
@@ -44,6 +44,8 @@ export function ProfileTab() {
   const [photoName, setPhotoName] = useState("Nenhuma foto selecionada");
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const photoBlobUrlRef = useRef<string | null>(null);
+  const initialAvatarUrlRef = useRef<string | null>(null);
+  const initialCvUrlRef = useRef<string | null>(null);
   const [cvName, setCvName] = useState("Nenhum arquivo selecionado");
 
   useEffect(() => {
@@ -80,6 +82,8 @@ export function ProfileTab() {
       setStacks(data.stacks || []);
       setAvatarUrl(data.avatarUrl || null);
       setCvUrl(data.cvUrl || null);
+      initialAvatarUrlRef.current = data.avatarUrl || null;
+      initialCvUrlRef.current = data.cvUrl || null;
 
       if (data.avatarUrl) {
         setPhotoPreview(data.avatarUrl);
@@ -284,6 +288,20 @@ export function ProfileTab() {
       if (!res.ok) {
         const errorJson = await res.json();
         throw new Error(errorJson.message || "Erro ao salvar perfil.");
+      }
+
+      const obsoleteUrls: (string | null)[] = [];
+      if (
+        initialAvatarUrlRef.current &&
+        initialAvatarUrlRef.current !== finalAvatarUrl
+      ) {
+        obsoleteUrls.push(initialAvatarUrlRef.current);
+      }
+      if (initialCvUrlRef.current && initialCvUrlRef.current !== finalCvUrl) {
+        obsoleteUrls.push(initialCvUrlRef.current);
+      }
+      if (obsoleteUrls.length > 0) {
+        void removeStorageFilesByUrls(obsoleteUrls);
       }
 
       toast.success("Configurações do perfil salvas com sucesso!");

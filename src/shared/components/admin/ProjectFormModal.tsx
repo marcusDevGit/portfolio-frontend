@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useAuthStore } from "../../stores/useAuthStore";
 import { X, Info, Globe, FolderGit2 } from "lucide-react";
 import { toast } from "sonner";
-import { supabase } from "../../utils/supabase";
+import { supabase, removeStorageFilesByUrls } from "../../utils/supabase";
 import { optimizeImageBeforeUpload } from "../../utils/optimizeImage";
 import type { Project } from "../../../features/projects/ProjectsSection";
 
@@ -243,6 +243,22 @@ export function ProjectFormModal({
         const errorData = await res.json();
         throw new Error(errorData.message || "Erro ao salvar projeto.");
       }
+
+      if (project) {
+        const obsoleteUrls: string[] = [];
+        if (project.imageUrl && project.imageUrl !== (finalImageUrl || null)) {
+          obsoleteUrls.push(project.imageUrl);
+        }
+        (project.screenshots ?? []).forEach((oldUrl) => {
+          if (!existingScreenshots.includes(oldUrl)) {
+            obsoleteUrls.push(oldUrl);
+          }
+        });
+        if (obsoleteUrls.length > 0) {
+          void removeStorageFilesByUrls(obsoleteUrls);
+        }
+      }
+
       toast.success(
         isEdit ? "Projeto atualizado!" : "Projeto criado com sucesso!",
       );

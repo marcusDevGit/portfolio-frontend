@@ -4,6 +4,7 @@ import { useAuthStore } from "../../stores/useAuthStore";
 import { Plus, Edit2, Trash2, ArrowUp, ArrowDown } from "lucide-react";
 import { toast } from "sonner";
 import { ProjectFormModal } from "./ProjectFormModal";
+import { removeStorageFilesByUrls } from "../../utils/supabase";
 import type { Project } from "../../../features/projects/ProjectsSection";
 
 export function ProjectsTab() {
@@ -34,6 +35,8 @@ export function ProjectsTab() {
   async function handleDeleteProject(id: string) {
     if (!confirm("Tem certeza que deseja deletar este projeto?")) return;
 
+    const target = projects.find((p) => p.id === id);
+
     try {
       const res = await fetch(
         `${import.meta.env.VITE_API_URL}/api/projects/${id}`,
@@ -43,6 +46,12 @@ export function ProjectsTab() {
         },
       );
       if (!res.ok) throw new Error("Erro ao deletar projeto.");
+      if (target) {
+        void removeStorageFilesByUrls([
+          target.imageUrl,
+          ...(target.screenshots ?? []),
+        ]);
+      }
       toast.success("Projeto excluído com sucesso!");
       setProjects((prev) => prev.filter((p) => p.id !== id));
     } catch (err) {
