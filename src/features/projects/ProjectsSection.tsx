@@ -11,6 +11,7 @@ export type Project = {
   githubUrl: string | null;
   demoUrl: string | null;
   imageUrl?: string;
+  screenshots?: string[];
   featured: boolean;
   order: number;
   problem?: string;
@@ -206,6 +207,7 @@ export function ProjectsSection() {
         </div>
       </ScrollReveal>
       <ProjectCaseStudyModal
+        key={selectedProject?.id ?? "none"}
         project={selectedProject}
         isOpen={!!selectedProject}
         onClose={() => setSelectedProject(null)}

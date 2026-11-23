@@ -1,6 +1,7 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { m, AnimatePresence } from "framer-motion";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import type { Project } from "./ProjectsSection";
 import { useCursorStore } from "../../shared/stores/useCursorStore";
 import { ExpandableText } from "./ExpandableText";
@@ -17,6 +18,7 @@ export function ProjectCaseStudyModal({
   onClose,
 }: ModalProps) {
   const setHovering = useCursorStore((state) => state.setHovering);
+  const [activeIndex, setActiveIndex] = useState(0);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -103,6 +105,80 @@ export function ProjectCaseStudyModal({
             </div>
 
             <div className="p-6 overflow-y-auto font-body text-zinc-300 space-y-8 scroll-smooth custom-scrollbar">
+              {project.screenshots && project.screenshots.length > 0 && (
+                <section aria-label="Galeria de telas">
+                  <h3 className="text-xs font-bold tracking-widest text-zinc-500 uppercase mb-3">
+                    Galeria de Telas ({activeIndex + 1}/
+                    {project.screenshots.length})
+                  </h3>
+                  <div className="relative rounded-xl overflow-hidden border border-(--border-subtle) bg-black/50">
+                    <img
+                      src={project.screenshots[activeIndex]}
+                      alt={`${project.title} - Tela ${activeIndex + 1}`}
+                      loading="lazy"
+                      decoding="async"
+                      className="w-full max-h-80 object-contain mx-auto"
+                    />
+                    {project.screenshots.length > 1 && (
+                      <>
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setActiveIndex((prev) =>
+                              prev === 0
+                                ? project.screenshots!.length - 1
+                                : prev - 1,
+                            )
+                          }
+                          aria-label="Tela anterior"
+                          className="absolute left-2 top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/70 text-white hover:bg-black/90 transition-colors cursor-pointer"
+                        >
+                          <ChevronLeft size={18} />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setActiveIndex((prev) =>
+                              prev === project.screenshots!.length - 1
+                                ? 0
+                                : prev + 1,
+                            )
+                          }
+                          aria-label="Próxima tela"
+                          className="absolute right-2 top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/70 text-white hover:bg-black/90 transition-colors cursor-pointer"
+                        >
+                          <ChevronRight size={18} />
+                        </button>
+                      </>
+                    )}
+                  </div>
+                  {project.screenshots.length > 1 && (
+                    <div className="flex gap-2 mt-3 overflow-x-auto pb-1">
+                      {project.screenshots.map((url, index) => (
+                        <button
+                          key={url}
+                          type="button"
+                          onClick={() => setActiveIndex(index)}
+                          aria-label={`Ver tela ${index + 1}`}
+                          className={`shrink-0 w-16 h-12 rounded-lg overflow-hidden border transition-all cursor-pointer ${
+                            index === activeIndex
+                              ? "border-(--accent-cyan) ring-1 ring-(--accent-cyan)"
+                              : "border-(--border-subtle) opacity-60 hover:opacity-100"
+                          }`}
+                        >
+                          <img
+                            src={url}
+                            alt={`Miniatura ${index + 1}`}
+                            loading="lazy"
+                            decoding="async"
+                            className="w-full h-full object-cover"
+                          />
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </section>
+              )}
               {project.problem && (
                 <section>
                   <h3 className="text-xs font-bold tracking-widest text-zinc-500 uppercase mb-2">

@@ -16,6 +16,7 @@ import { toast } from "sonner";
 import { useAuthStore } from "../../stores/useAuthStore";
 import { useProfileStore } from "../../stores/useProfileStore";
 import { supabase } from "../../utils/supabase";
+import { optimizeImageBeforeUpload } from "../../utils/optimizeImage";
 
 interface StatsData {
   totalVisits: number;
@@ -213,12 +214,22 @@ export function ProfileTab() {
     file: File,
     folder: "avatars" | "documents",
   ): Promise<string> {
-    const fileExt = file.name.split(".").pop();
+    if (!supabase) {
+      throw new Error(
+        "Supabase Storage não configurado no .env (VITE_SUPABASE_URL / VITE_SUPABASE_PUBLISHABLE_KEY).",
+      );
+    }
+
+    const fileToUpload =
+      folder === "avatars"
+        ? await optimizeImageBeforeUpload(file, 800)
+        : file;
+    const fileExt = fileToUpload.name.split(".").pop();
     const path = `${folder}/${Date.now()}-${Math.round(Math.random() * 1e9)}.${fileExt}`;
 
     const { error } = await supabase.storage
       .from("portfolio")
-      .upload(path, file, {
+      .upload(path, fileToUpload, {
         cacheControl: "3600",
         upsert: true,
       });

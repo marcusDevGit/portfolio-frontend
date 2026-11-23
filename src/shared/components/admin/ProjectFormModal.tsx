@@ -4,6 +4,7 @@ import { useAuthStore } from "../../stores/useAuthStore";
 import { X, Info, Globe, FolderGit2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "../../utils/supabase";
+import { optimizeImageBeforeUpload } from "../../utils/optimizeImage";
 import type { Project } from "../../../features/projects/ProjectsSection";
 
 interface ProjectFormModalProps {
@@ -58,15 +59,68 @@ export function ProjectFormModal({
   );
   const blobUrlRef = useRef<string | null>(null);
 
+  const [existingScreenshots, setExistingScreenshots] = useState<string[]>(
+    project?.screenshots || [],
+  );
+  const [pendingScreenshots, setPendingScreenshots] = useState<
+    { file: File; previewUrl: string }[]
+  >([]);
+  const pendingScreenshotsRef = useRef<{ file: File; previewUrl: string }[]>(
+    [],
+  );
+
+  useEffect(() => {
+    pendingScreenshotsRef.current = pendingScreenshots;
+  }, [pendingScreenshots]);
+
   useEffect(() => {
     return () => {
       if (blobUrlRef.current) {
         URL.revokeObjectURL(blobUrlRef.current);
       }
+      pendingScreenshotsRef.current.forEach((item) => {
+        URL.revokeObjectURL(item.previewUrl);
+      });
     };
   }, []);
 
   if (!isOpen) return null;
+
+  function handleAddScreenshots(e: React.ChangeEvent<HTMLInputElement>) {
+    const files = Array.from(e.target.files ?? []);
+    if (files.length === 0) return;
+
+    const totalCurrent = existingScreenshots.length + pendingScreenshots.length;
+    const remaining = Math.max(0, 10 - totalCurrent);
+    if (remaining === 0) {
+      toast.warning("Limite máximo de 10 screenshots por projeto.");
+      e.target.value = "";
+      return;
+    }
+
+    const accepted = files.slice(0, remaining).map((file) => ({
+      file,
+      previewUrl: URL.createObjectURL(file),
+    }));
+
+    if (files.length > remaining) {
+      toast.info(`Apenas ${remaining} imagem(ns) adicionada(s) (limite de 10).`);
+    }
+
+    setPendingScreenshots((prev) => [...prev, ...accepted]);
+    e.target.value = "";
+  }
+
+  function handleRemoveExistingScreenshot(urlToRemove: string) {
+    setExistingScreenshots((prev) => prev.filter((url) => url !== urlToRemove));
+  }
+
+  function handleRemovePendingScreenshot(previewUrlToRemove: string) {
+    URL.revokeObjectURL(previewUrlToRemove);
+    setPendingScreenshots((prev) =>
+      prev.filter((item) => item.previewUrl !== previewUrlToRemove),
+    );
+  }
 
   function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -102,12 +156,18 @@ export function ProjectFormModal({
       let finalImageUrl = imageUrl;
 
       if (imageFile) {
-        const fileExt = imageFile.name.split(".").pop();
+        if (!supabase) {
+          throw new Error(
+            "Supabase Storage não configurado no .env (VITE_SUPABASE_URL / VITE_SUPABASE_PUBLISHABLE_KEY).",
+          );
+        }
+        const optimizedBanner = await optimizeImageBeforeUpload(imageFile, 1400);
+        const fileExt = optimizedBanner.name.split(".").pop();
         const fileName = `project/${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
 
         const { error } = await supabase.storage
           .from("portfolio")
-          .upload(fileName, imageFile);
+          .upload(fileName, optimizedBanner);
 
         if (error) throw new Error("Erro ao fazer upload da imagem do projeto");
 
@@ -116,6 +176,32 @@ export function ProjectFormModal({
           .getPublicUrl(fileName);
 
         finalImageUrl = publicUrlData.publicUrl;
+      }
+
+      const uploadedScreenshots: string[] = [];
+      for (const item of pendingScreenshots) {
+        if (!supabase) {
+          throw new Error(
+            "Supabase Storage não configurado no .env (VITE_SUPABASE_URL / VITE_SUPABASE_PUBLISHABLE_KEY).",
+          );
+        }
+        const optimizedShot = await optimizeImageBeforeUpload(item.file, 1400);
+        const fileExt = optimizedShot.name.split(".").pop();
+        const fileName = `project/screenshots/${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
+
+        const { error } = await supabase.storage
+          .from("portfolio")
+          .upload(fileName, optimizedShot);
+
+        if (error) {
+          throw new Error("Erro ao fazer upload de uma screenshot do projeto");
+        }
+
+        const { data: publicUrlData } = supabase.storage
+          .from("portfolio")
+          .getPublicUrl(fileName);
+
+        uploadedScreenshots.push(publicUrlData.publicUrl);
       }
 
       const payload = {
@@ -128,6 +214,7 @@ export function ProjectFormModal({
         githubUrl: githubUrl || null,
         demoUrl: demoUrl || null,
         imageUrl: finalImageUrl || null,
+        screenshots: [...existingScreenshots, ...uploadedScreenshots],
         featured,
         order: Number(order),
         problem: problem || null,
@@ -459,6 +546,75 @@ export function ProjectFormModal({
                   className="bg-neutral-950 border border-neutral-800 rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-(--accent-cyan)/50 resize-none"
                 />
               </div>
+            </div>
+
+            {/* Galeria de Screenshots */}
+            <div className="flex flex-col gap-2 pt-2">
+              <div className="flex items-center justify-between gap-2">
+                <label className="text-xs font-display uppercase tracking-widest text-neutral-500">
+                  Galeria de Telas / Screenshots (
+                  {existingScreenshots.length + pendingScreenshots.length}/10)
+                </label>
+                <label className="px-3 py-1.5 rounded-lg border border-neutral-800 hover:border-(--accent-cyan)/40 text-xs font-display uppercase tracking-widest text-neutral-300 hover:text-white cursor-pointer transition-colors">
+                  Adicionar Telas
+                  <input
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    disabled={isLoading}
+                    onChange={handleAddScreenshots}
+                    className="hidden"
+                  />
+                </label>
+              </div>
+
+              {(existingScreenshots.length > 0 ||
+                pendingScreenshots.length > 0) && (
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-1">
+                  {existingScreenshots.map((url) => (
+                    <div
+                      key={url}
+                      className="relative group rounded-lg overflow-hidden border border-neutral-800 bg-neutral-950 aspect-video"
+                    >
+                      <img
+                        src={url}
+                        alt="Screenshot salva"
+                        className="w-full h-full object-cover"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveExistingScreenshot(url)}
+                        aria-label="Remover screenshot"
+                        className="absolute top-1 right-1 p-1 rounded-full bg-black/70 text-neutral-300 hover:text-red-400 cursor-pointer"
+                      >
+                        <X size={12} />
+                      </button>
+                    </div>
+                  ))}
+                  {pendingScreenshots.map((item) => (
+                    <div
+                      key={item.previewUrl}
+                      className="relative group rounded-lg overflow-hidden border border-(--accent-cyan)/40 bg-neutral-950 aspect-video"
+                    >
+                      <img
+                        src={item.previewUrl}
+                        alt="Nova screenshot"
+                        className="w-full h-full object-cover"
+                      />
+                      <button
+                        type="button"
+                        onClick={() =>
+                          handleRemovePendingScreenshot(item.previewUrl)
+                        }
+                        aria-label="Remover screenshot pendente"
+                        className="absolute top-1 right-1 p-1 rounded-full bg-black/70 text-neutral-300 hover:text-red-400 cursor-pointer"
+                      >
+                        <X size={12} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
 
