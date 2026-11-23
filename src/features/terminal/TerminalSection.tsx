@@ -29,10 +29,64 @@ export function TerminalSection() {
     inputRef.current?.focus();
   };
 
+  const fetchHealthStatus = async (commandText: string) => {
+    const apiUrl = (import.meta.env.VITE_API_URL || "").replace(/\/+$/, "");
+    const startedAt = performance.now();
+
+    try {
+      const res = await fetch(`${apiUrl}/health`, {
+        signal: AbortSignal.timeout(5000),
+      });
+      const apiLatency = Math.round(performance.now() - startedAt);
+      const data = await res.json();
+
+      const db = data.services?.database;
+      const redis = data.services?.redis;
+      const dbLine = db
+        ? `${db.status.toUpperCase()}${db.latencyMs !== null ? ` (${db.latencyMs}ms)` : ""}`
+        : "UNKNOWN";
+      const redisLine = redis
+        ? `${redis.status.toUpperCase()}${redis.latencyMs !== null ? ` (${redis.latencyMs}ms)` : ""}`
+        : "UNKNOWN";
+
+      const output = [
+        `Status Geral:   ${String(data.status || "ok").toUpperCase()}`,
+        `API (Backend):  OK (${apiLatency}ms)`,
+        `PostgreSQL:     ${dbLine}`,
+        `Upstash Redis:  ${redisLine}`,
+        `Ambiente:       ${data.environment || "production"}`,
+      ].join("\n");
+
+      const currentHistory = useTerminalStore.getState().history;
+      setHistory([
+        ...currentHistory,
+        { type: "input", text: commandText },
+        { type: "output", text: output },
+      ]);
+    } catch {
+      const currentHistory = useTerminalStore.getState().history;
+      setHistory([
+        ...currentHistory,
+        { type: "input", text: commandText },
+        {
+          type: "output",
+          text: "Erro: Não foi possível consultar /health da API no momento.",
+        },
+      ]);
+    }
+  };
+
   const handleCommandSubmit = (e: React.SyntheticEvent) => {
     e.preventDefault();
     const command = inputVal.trim();
     if (!command) return;
+
+    const normalized = command.toLowerCase();
+    if (normalized === "status" || normalized === "health") {
+      setInputVal("");
+      void fetchHealthStatus(command);
+      return;
+    }
 
     const output = processCommand(command);
 
@@ -96,6 +150,7 @@ export function TerminalSection() {
   skills    - Tecnologias e barra de domínio técnico.
   contact   - Links e informações de e-mail.
   neofetch  - Informações completas do sistema de dev.
+  status    - Verifica a saúde da API, banco e cache.
   clear     - Limpa o histórico da tela.
   exit      - Fecha a janela do terminal.
   

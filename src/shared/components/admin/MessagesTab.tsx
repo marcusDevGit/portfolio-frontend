@@ -1,7 +1,7 @@
 // src/shared/components/amin/MessagesTab.tsx
 import { useState, useEffect, useCallback } from "react";
 import { useAuthStore } from "../../stores/useAuthStore";
-import { Check } from "lucide-react";
+import { Check, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
 interface Message {
@@ -50,6 +50,28 @@ export function MessagesTab() {
       setMessages((prev) =>
         prev.map((msg) => (msg.id === id ? { ...msg, read: true } : msg)),
       );
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Erro desconhecido.";
+      toast.error(message);
+    }
+  }
+
+  async function handleDelete(id: string) {
+    if (!window.confirm("Tem certeza que deseja excluir esta mensagem?")) {
+      return;
+    }
+
+    try {
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/contact/${id}`,
+        {
+          method: "DELETE",
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
+      if (!res.ok) throw new Error("Erro ao excluir mensagem.");
+      toast.success("Mensagem excluída!");
+      setMessages((prev) => prev.filter((msg) => msg.id !== id));
     } catch (err) {
       const message = err instanceof Error ? err.message : "Erro desconhecido.";
       toast.error(message);
@@ -105,7 +127,12 @@ export function MessagesTab() {
                       {msg.name}
                     </span>
                     {!msg.read && (
-                      <span className="h-1.5 w-1.5 rounded-full bg-(--accent-cyan) animate-ping" />
+                      <>
+                        <span className="h-1.5 w-1.5 rounded-full bg-(--accent-cyan) animate-ping" />
+                        <span className="text-[10px] font-display uppercase tracking-widest px-2 py-0.5 rounded bg-(--accent-cyan)/15 text-(--accent-cyan) border border-(--accent-cyan)/30">
+                          Nova
+                        </span>
+                      </>
                     )}
                   </div>
                   <span className="text-xs text-neutral-500">{msg.email}</span>
@@ -117,17 +144,29 @@ export function MessagesTab() {
               <p className="text-sm text-neutral-400 bg-neutral-950/40 p-4 rounded-lg border border-neutral-900/50 leading-relaxed font-body whitespace-pre-wrap">
                 {msg.message}
               </p>
-              {!msg.read && (
+              <div className="flex items-center justify-end gap-2">
+                {!msg.read && (
+                  <button
+                    onClick={() => handleMarkAsRead(msg.id)}
+                    className="
+                      flex items-center gap-1.5 px-3 py-1.5 rounded bg-neutral-900 border border-neutral-800
+                      hover:border-(--accent-cyan)/30 hover:text-white text-xs font-display uppercase tracking-widest transition-colors cursor-pointer
+                    "
+                  >
+                    <Check size={12} /> Marcar como lida
+                  </button>
+                )}
                 <button
-                  onClick={() => handleMarkAsRead(msg.id)}
+                  onClick={() => handleDelete(msg.id)}
+                  aria-label={`Excluir mensagem de ${msg.name}`}
                   className="
-                    self-end flex items-center gap-1.5 px-3 py-1.5 rounded bg-neutral-900 border border-neutral-800
-                    hover:border-(--accent-cyan)/30 hover:text-white text-xs font-display uppercase tracking-widest transition-colors cursor-pointer
+                    flex items-center gap-1.5 px-3 py-1.5 rounded bg-neutral-900 border border-neutral-800
+                    hover:border-red-500/40 hover:text-red-400 text-xs font-display uppercase tracking-widest transition-colors cursor-pointer
                   "
                 >
-                  <Check size={12} /> Marcar como lida
+                  <Trash2 size={12} /> Excluir
                 </button>
-              )}
+              </div>
             </div>
           ))}
         </div>
