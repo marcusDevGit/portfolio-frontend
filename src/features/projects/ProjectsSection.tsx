@@ -1,8 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { ScrollReveal } from "../../shared/components/motion/ScrollReveal";
 import { useCursorStore } from "../../shared/stores/useCursorStore";
 import { ProjectCaseStudyModal } from "./ProjectCaseStudy";
-import { FolderGit2 } from "lucide-react";
+import { FolderGit2, Search, X } from "lucide-react";
 export type Project = {
   id: string;
   title: string;
@@ -25,9 +25,12 @@ export function ProjectsSection() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [status, setStatus] = useState<FetchStatus>("loading");
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  const [selectedTech, setSelectedTech] = useState<string>("Todos");
+  const [searchQuery, setSearchQuery] = useState<string>("");
 
   useEffect(() => {
-    fetch(`${import.meta.env.VITE_API_URL}/api/projects`)
+    const apiUrl = (import.meta.env.VITE_API_URL || "").replace(/\/+$/, "");
+    fetch(`${apiUrl}/api/projects`)
       .then(async (res) => {
         if (!res.ok) throw new Error("Falha ao carregar projetos");
         const json = await res.json();
@@ -36,6 +39,42 @@ export function ProjectsSection() {
       })
       .catch(() => setStatus("error"));
   }, []);
+
+  const availableTechs = useMemo(() => {
+    const counts = new Map<string, number>();
+    projects.forEach((project) => {
+      project.techStack.forEach((tech) => {
+        counts.set(tech, (counts.get(tech) ?? 0) + 1);
+      });
+    });
+
+    const topTechs = Array.from(counts.entries())
+      .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+      .slice(0, 8)
+      .map(([tech]) => tech);
+
+    return ["Todos", ...topTechs];
+  }, [projects]);
+
+  const filteredProjects = useMemo(() => {
+    const query = searchQuery.trim().toLowerCase();
+
+    return projects.filter((project) => {
+      const matchesTech =
+        selectedTech === "Todos" ||
+        project.techStack.some(
+          (tech) => tech.toLowerCase() === selectedTech.toLowerCase(),
+        );
+
+      const matchesQuery =
+        !query ||
+        project.title.toLowerCase().includes(query) ||
+        project.description.toLowerCase().includes(query) ||
+        project.techStack.some((tech) => tech.toLowerCase().includes(query));
+
+      return matchesTech && matchesQuery;
+    });
+  }, [projects, selectedTech, searchQuery]);
 
   return (
     <section
@@ -73,15 +112,96 @@ export function ProjectsSection() {
             </p>
           )}
           {status === "success" && (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {projects.map((project) => (
-                <ProjectCard
-                  key={project.id}
-                  project={project}
-                  onSelect={() => setSelectedProject(project)}
-                />
-              ))}
-            </div>
+            <>
+              <div className="mb-10 flex flex-col gap-4 items-center">
+                {/* Campo de busca */}
+                <div className="relative w-full max-w-md">
+                  <Search
+                    size={16}
+                    className="absolute left-3.5 top-1/2 -translate-y-1/2 text-(--text-muted) pointer-events-none"
+                  />
+                  <input
+                    type="search"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Buscar por projeto ou tecnologia..."
+                    aria-label="Buscar projetos"
+                    className="
+                      w-full bg-(--bg-card) border border-(--border-subtle) rounded-xl
+                      pl-10 pr-9 py-2.5 text-sm text-(--text-primary) placeholder:text-(--text-muted)
+                      focus:outline-none focus:border-(--accent-cyan)/50 transition-colors
+                    "
+                  />
+                  {searchQuery && (
+                    <button
+                      type="button"
+                      onClick={() => setSearchQuery("")}
+                      aria-label="Limpar busca"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-(--text-muted) hover:text-(--text-primary) cursor-pointer"
+                    >
+                      <X size={14} />
+                    </button>
+                  )}
+                </div>
+
+                {/* Chips de tecnologia */}
+                <div
+                  className="flex flex-wrap items-center justify-center gap-2"
+                  role="group"
+                  aria-label="Filtrar projetos por tecnologia"
+                >
+                  {availableTechs.map((tech) => {
+                    const isActive = selectedTech === tech;
+                    return (
+                      <button
+                        key={tech}
+                        type="button"
+                        onClick={() => setSelectedTech(tech)}
+                        aria-pressed={isActive}
+                        className={`
+                          px-3.5 py-1.5 rounded-full text-xs font-display tracking-wide transition-all duration-200 cursor-pointer border
+                          ${
+                            isActive
+                              ? "bg-(--accent-cyan) text-neutral-950 border-(--accent-cyan) font-semibold shadow-[0_0_16px_rgba(0,209,255,0.25)]"
+                              : "bg-(--bg-card) text-(--text-secondary) border-(--border-subtle) hover:border-(--accent-cyan)/40 hover:text-(--text-primary)"
+                          }
+                        `}
+                      >
+                        {tech}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {filteredProjects.length === 0 ? (
+                <div className="text-center py-12 bg-(--bg-card) border border-(--border-subtle) rounded-2xl">
+                  <p className="text-sm text-(--text-secondary) font-body mb-3">
+                    Nenhum projeto encontrado para os filtros selecionados.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSelectedTech("Todos");
+                      setSearchQuery("");
+                    }}
+                    className="px-4 py-2 rounded-lg text-xs font-display uppercase tracking-widest border border-(--border-subtle) text-(--accent-cyan) hover:border-(--accent-cyan)/50 transition-colors cursor-pointer"
+                  >
+                    Limpar filtros
+                  </button>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {filteredProjects.map((project) => (
+                    <ProjectCard
+                      key={project.id}
+                      project={project}
+                      onSelect={() => setSelectedProject(project)}
+                    />
+                  ))}
+                </div>
+              )}
+            </>
           )}
         </div>
       </ScrollReveal>
