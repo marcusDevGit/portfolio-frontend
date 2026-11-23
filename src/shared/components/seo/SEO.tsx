@@ -8,10 +8,10 @@ interface SEOProps {
 }
 
 export function SEO({
-  title = "Marcus Phellypp - Desenvolvedor Full-Stack",
+  title = "Marcus Phellypp — Desenvolvedor Full-Stack",
   description = "Desenvolvedor focado em React, Node.js e TypeScript. Construindo interfaces modernas e APIs robustas com foco em segurança e escalabilidade.",
-  image = "https://portfolio-frontend-liart-pi.vercel.app/og-image.png",
-  url = "https://portfolio-frontend-liart-pi.vercel.app",
+  image = "https://www.phelyp.dev/og-image.png",
+  url = "https://www.phelyp.dev/",
 }: SEOProps) {
   return (
     <Helmet>
