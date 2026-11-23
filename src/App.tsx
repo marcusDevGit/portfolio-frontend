@@ -50,6 +50,23 @@ function App() {
   useKonamiCode(toggleMatrix);
 
   useEffect(() => {
+    const storageKey = "portfolio_visit_tracked";
+    if (sessionStorage.getItem(storageKey)) return;
+
+    sessionStorage.setItem(storageKey, "1");
+    const apiUrl = (import.meta.env.VITE_API_URL || "").replace(/\/+$/, "");
+    if (!apiUrl) return;
+
+    fetch(`${apiUrl}/api/analytics/visit`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ path: window.location.pathname }),
+    }).catch(() => {
+      sessionStorage.removeItem(storageKey);
+    });
+  }, []);
+
+  useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "`" && e.ctrlKey) {
         e.preventDefault();
