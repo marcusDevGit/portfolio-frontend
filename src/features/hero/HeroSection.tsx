@@ -155,7 +155,7 @@ export function HeroSection() {
     <section
       ref={sectionRef}
       id="top"
-      className="relative z-10 min-h-screen flex flex-col items-center justify-center text-center px-4 overflow-hidden "
+      className="relative z-10 pt-6 pb-12 md:py-0 md:min-h-screen flex flex-col items-center justify-center text-center px-4 overflow-hidden"
     >
       <HeroBackground scrollYProgress={scrollYProgress} />
       <m.div
@@ -213,7 +213,7 @@ export function HeroSection() {
         <div
           ref={ctasRef}
           style={{ opacity: 0 }}
-          className="flex flex-col sm:flex-row items-center gap-4 mb-16"
+          className="flex flex-col sm:flex-row items-center gap-4 mb-4 md:mb-16"
         >
           <a
             href="#projects"

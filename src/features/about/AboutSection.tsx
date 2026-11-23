@@ -13,11 +13,11 @@ export function AboutSection() {
   }, [fetchProfile]);
 
   return (
-    <section id="about" className="relative z-10 py-24 px-4">
+    <section id="about" className="relative z-10 py-12 md:py-24 px-4">
       <ScrollReveal>
         <div className="max-w-5xl mx-auto">
           {/* Cabeçalho */}
-          <div className="text-center mb-16">
+          <div className="text-center mb-10 md:mb-16">
             <span className="text-xs font-display uppercase tracking-widest text-(--accent-cyan) mb-4 block">
               Sobre
             </span>

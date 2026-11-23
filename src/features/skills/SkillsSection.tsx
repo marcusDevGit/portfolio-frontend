@@ -52,16 +52,23 @@ const EMPTY_STACKS: string[] = [];
 export function SkillsSection() {
   const activeStacks = useProfileStore((state) => state.profile?.stacks ?? EMPTY_STACKS);
   const fetchProfile = useProfileStore((state) => state.fetchProfile);
+  const [activeCategory, setActiveCategory] = useState<string>(
+    SKILL_CATEGORIES[0].title,
+  );
 
   useEffect(() => {
     fetchProfile();
   }, [fetchProfile]);
 
+  const selectedCategory =
+    SKILL_CATEGORIES.find((cat) => cat.title === activeCategory) ??
+    SKILL_CATEGORIES[0];
+
   return (
-    <section id="skills" className="relative z-10 py-24  px-4">
+    <section id="skills" className="relative z-10 py-14 md:py-24 px-4">
       <ScrollReveal>
         <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-16">
+          <div className="text-center mb-10 md:mb-16">
             <span className="text-xs font-display uppercase tracking-widest text-(--accent-cyan) mb-4 block ">
               Habilidades{" "}
             </span>
@@ -73,13 +80,47 @@ export function SkillsSection() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {/* Mobile: abas compactas para evitar 3 cards empilhados */}
+          <div className="md:hidden space-y-4">
+            <div
+              className="flex items-center justify-center gap-2"
+              role="tablist"
+              aria-label="Categorias de habilidades"
+            >
+              {SKILL_CATEGORIES.map((category) => {
+                const isSelected = category.title === selectedCategory.title;
+                return (
+                  <button
+                    key={category.title}
+                    type="button"
+                    role="tab"
+                    aria-selected={isSelected}
+                    onClick={() => setActiveCategory(category.title)}
+                    className={`
+                      px-3.5 py-2 rounded-xl text-xs font-display uppercase tracking-wider transition-all cursor-pointer border
+                      ${
+                        isSelected
+                          ? "bg-(--accent-cyan) text-neutral-950 border-(--accent-cyan) font-semibold"
+                          : "bg-(--bg-card) text-(--text-secondary) border-(--border-subtle)"
+                      }
+                    `}
+                  >
+                    {category.title}
+                  </button>
+                );
+              })}
+            </div>
+            <SkillCategoryCard category={selectedCategory} />
+          </div>
+
+          {/* Desktop: grid completo com 3 colunas */}
+          <div className="hidden md:grid md:grid-cols-3 gap-6">
             {SKILL_CATEGORIES.map((category) => (
               <SkillCategoryCard key={category.title} category={category} />
             ))}
           </div>
           {activeStacks.length > 0 && (
-            <div className="mt-16 pt-8 border-t border-(--border-subtle) text-center">
+            <div className="mt-10 md:mt-16 pt-6 md:pt-8 border-t border-(--border-subtle) text-center">
               <span className="text-xs font-display uppercase tracking-widest text-(--text-muted) mb-4 block">
                 Outras Tecnologias & Stacks Ativas
               </span>

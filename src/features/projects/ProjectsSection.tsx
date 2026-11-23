@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from "react";
 import { ScrollReveal } from "../../shared/components/motion/ScrollReveal";
 import { useCursorStore } from "../../shared/stores/useCursorStore";
 import { ProjectCaseStudyModal } from "./ProjectCaseStudy";
-import { FolderGit2, Search, X } from "lucide-react";
+import { FolderGit2, Search, SlidersHorizontal, X } from "lucide-react";
 export type Project = {
   id: string;
   title: string;
@@ -28,6 +28,8 @@ export function ProjectsSection() {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [selectedTech, setSelectedTech] = useState<string>("Todos");
   const [searchQuery, setSearchQuery] = useState<string>("");
+  const [showMobileFilters, setShowMobileFilters] = useState(false);
+  const [showAllMobile, setShowAllMobile] = useState(false);
 
   useEffect(() => {
     const apiUrl = (import.meta.env.VITE_API_URL || "").replace(/\/+$/, "");
@@ -114,64 +116,82 @@ export function ProjectsSection() {
           )}
           {status === "success" && (
             <>
-              <div className="mb-10 flex flex-col gap-4 items-center">
-                {/* Campo de busca */}
-                <div className="relative w-full max-w-md">
-                  <Search
-                    size={16}
-                    className="absolute left-3.5 top-1/2 -translate-y-1/2 text-(--text-muted) pointer-events-none"
-                  />
-                  <input
-                    type="search"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Buscar por projeto ou tecnologia..."
-                    aria-label="Buscar projetos"
-                    className="
-                      w-full bg-(--bg-card) border border-(--border-subtle) rounded-xl
-                      pl-10 pr-9 py-2.5 text-sm text-(--text-primary) placeholder:text-(--text-muted)
-                      focus:outline-none focus:border-(--accent-cyan)/50 transition-colors
-                    "
-                  />
-                  {searchQuery && (
-                    <button
-                      type="button"
-                      onClick={() => setSearchQuery("")}
-                      aria-label="Limpar busca"
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-(--text-muted) hover:text-(--text-primary) cursor-pointer"
-                    >
-                      <X size={14} />
-                    </button>
-                  )}
-                </div>
-
-                {/* Chips de tecnologia */}
-                <div
-                  className="flex flex-wrap items-center justify-center gap-2"
-                  role="group"
-                  aria-label="Filtrar projetos por tecnologia"
+              <div className="mb-8 md:mb-10 flex flex-col gap-4 items-center">
+                {/* Toggle compacto para mobile */}
+                <button
+                  type="button"
+                  onClick={() => setShowMobileFilters((prev) => !prev)}
+                  aria-expanded={showMobileFilters}
+                  className="md:hidden inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-(--bg-card) border border-(--border-subtle) text-xs font-display uppercase tracking-widest text-(--text-secondary) hover:text-(--text-primary) hover:border-(--accent-cyan)/40 transition-colors cursor-pointer"
                 >
-                  {availableTechs.map((tech) => {
-                    const isActive = selectedTech === tech;
-                    return (
+                  <SlidersHorizontal size={14} className="text-(--accent-cyan)" />
+                  {showMobileFilters ? "Ocultar filtros" : "Filtrar projetos"}
+                  {(selectedTech !== "Todos" || searchQuery.trim() !== "") && (
+                    <span className="h-2 w-2 rounded-full bg-(--accent-cyan)" />
+                  )}
+                </button>
+
+                <div
+                  className={`w-full flex-col gap-4 items-center ${showMobileFilters ? "flex" : "hidden"} md:flex`}
+                >
+                  {/* Campo de busca */}
+                  <div className="relative w-full max-w-md">
+                    <Search
+                      size={16}
+                      className="absolute left-3.5 top-1/2 -translate-y-1/2 text-(--text-muted) pointer-events-none"
+                    />
+                    <input
+                      type="search"
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      placeholder="Buscar por projeto ou tecnologia..."
+                      aria-label="Buscar projetos"
+                      className="
+                        w-full bg-(--bg-card) border border-(--border-subtle) rounded-xl
+                        pl-10 pr-9 py-2.5 text-sm text-(--text-primary) placeholder:text-(--text-muted)
+                        focus:outline-none focus:border-(--accent-cyan)/50 transition-colors
+                      "
+                    />
+                    {searchQuery && (
                       <button
-                        key={tech}
                         type="button"
-                        onClick={() => setSelectedTech(tech)}
-                        aria-pressed={isActive}
-                        className={`
-                          px-3.5 py-1.5 rounded-full text-xs font-display tracking-wide transition-all duration-200 cursor-pointer border
-                          ${
-                            isActive
-                              ? "bg-(--accent-cyan) text-neutral-950 border-(--accent-cyan) font-semibold shadow-[0_0_16px_rgba(0,209,255,0.25)]"
-                              : "bg-(--bg-card) text-(--text-secondary) border-(--border-subtle) hover:border-(--accent-cyan)/40 hover:text-(--text-primary)"
-                          }
-                        `}
+                        onClick={() => setSearchQuery("")}
+                        aria-label="Limpar busca"
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-(--text-muted) hover:text-(--text-primary) cursor-pointer"
                       >
-                        {tech}
+                        <X size={14} />
                       </button>
-                    );
-                  })}
+                    )}
+                  </div>
+
+                  {/* Chips de tecnologia */}
+                  <div
+                    className="flex flex-wrap items-center justify-center gap-2"
+                    role="group"
+                    aria-label="Filtrar projetos por tecnologia"
+                  >
+                    {availableTechs.map((tech) => {
+                      const isActive = selectedTech === tech;
+                      return (
+                        <button
+                          key={tech}
+                          type="button"
+                          onClick={() => setSelectedTech(tech)}
+                          aria-pressed={isActive}
+                          className={`
+                            px-3.5 py-1.5 rounded-full text-xs font-display tracking-wide transition-all duration-200 cursor-pointer border
+                            ${
+                              isActive
+                                ? "bg-(--accent-cyan) text-neutral-950 border-(--accent-cyan) font-semibold shadow-[0_0_16px_rgba(0,209,255,0.25)]"
+                                : "bg-(--bg-card) text-(--text-secondary) border-(--border-subtle) hover:border-(--accent-cyan)/40 hover:text-(--text-primary)"
+                            }
+                          `}
+                        >
+                          {tech}
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
 
@@ -192,15 +212,47 @@ export function ProjectsSection() {
                   </button>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {filteredProjects.map((project) => (
-                    <ProjectCard
-                      key={project.id}
-                      project={project}
-                      onSelect={() => setSelectedProject(project)}
-                    />
-                  ))}
-                </div>
+                <>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {filteredProjects.map((project, index) => {
+                      const hasActiveFilter =
+                        selectedTech !== "Todos" || searchQuery.trim() !== "";
+                      const hiddenOnMobile =
+                        !showAllMobile && !hasActiveFilter && index >= 2;
+
+                      return (
+                        <div
+                          key={project.id}
+                          className={
+                            hiddenOnMobile ? "hidden md:flex" : "flex"
+                          }
+                        >
+                          <ProjectCard
+                            project={project}
+                            onSelect={() => setSelectedProject(project)}
+                          />
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  {selectedTech === "Todos" &&
+                    searchQuery.trim() === "" &&
+                    filteredProjects.length > 2 && (
+                      <div className="mt-6 flex justify-center md:hidden">
+                        <button
+                          type="button"
+                          onClick={() => setShowAllMobile((prev) => !prev)}
+                          aria-expanded={showAllMobile}
+                          className="px-5 py-2.5 rounded-xl bg-(--bg-card) border border-(--border-subtle) text-xs font-display uppercase tracking-widest text-(--accent-cyan) hover:border-(--accent-cyan)/50 transition-colors cursor-pointer"
+                        >
+                          {showAllMobile
+                            ? "Mostrar menos ↑"
+                            : `Ver todos os projetos (${filteredProjects.length}) ↓`}
+                        </button>
+                      </div>
+                    )}
+                </>
               )}
             </>
           )}
@@ -229,7 +281,7 @@ function ProjectCard({
       className="
         group relative flex flex-col
         bg-(--bg-card) backdrop-blur-md
-        border border-(--border-subtle) rounded-2xl p-6
+        border border-(--border-subtle) rounded-2xl p-4 sm:p-6
         hover:border-(--accent-cyan)/30
         transition-all duration-300
       "
@@ -238,7 +290,7 @@ function ProjectCard({
     >
       {/* Banner do Projeto */}
       {project.imageUrl ? (
-        <div className="relative w-full aspect-video overflow-hidden rounded-xl mb-4 border border-(--border-subtle) bg-neutral-950">
+        <div className="relative w-full aspect-video overflow-hidden rounded-xl mb-3 sm:mb-4 border border-(--border-subtle) bg-neutral-950">
           <img
             src={project.imageUrl}
             alt={project.title}
@@ -248,9 +300,9 @@ function ProjectCard({
           <div className="absolute inset-0 bg-linear-to-t from-neutral-950/80 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity duration-300" />
         </div>
       ) : (
-        <div className="relative w-full aspect-video overflow-hidden rounded-xl mb-4 border border-(--border-subtle) bg-neutral-900/10 flex items-center justify-center">
+        <div className="relative w-full h-24 sm:h-auto sm:aspect-video overflow-hidden rounded-xl mb-3 sm:mb-4 border border-(--border-subtle) bg-neutral-900/10 flex items-center justify-center">
           <FolderGit2
-            size={32}
+            size={28}
             className="text-neutral-700 group-hover:text-(--accent-cyan)/50 transition-colors duration-300"
           />
         </div>
@@ -260,10 +312,10 @@ function ProjectCard({
         <div className="absolute inset-0 rounded-2xl bg-linear-to-br from-(--accent-cyan)/5 to-transparent pointer-events-none" />
       )}
 
-      <h3 className="font-display font-semibold text-lg text-(--text-primary) mb-3 group-hover:text-(--accent-cyan) transition-colors duration-200">
+      <h3 className="font-display font-semibold text-base sm:text-lg text-(--text-primary) mb-2 sm:mb-3 group-hover:text-(--accent-cyan) transition-colors duration-200">
         {project.title}
       </h3>
-      <p className="font-body text-sm text-(--text-secondary) leading-relaxed mb-4 flex-1">
+      <p className="font-body text-sm text-(--text-secondary) leading-relaxed mb-4 flex-1 line-clamp-3 md:line-clamp-none">
         {project.description}
       </p>
       <div

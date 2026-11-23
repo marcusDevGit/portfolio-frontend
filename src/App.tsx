@@ -140,7 +140,7 @@ function App() {
         )}
         <Navbar />
 
-        <main className="relative z-10 pt-32 text-center">
+        <main className="relative z-10 pt-20 md:pt-28 text-center">
           <HeroSection />
           <AboutSection />
           <ProjectsSection />
